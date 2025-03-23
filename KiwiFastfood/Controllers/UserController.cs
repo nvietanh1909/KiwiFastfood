@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using KiwiFastfood.Services;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace KiwiFastfood.Controllers
@@ -15,7 +16,7 @@ namespace KiwiFastfood.Controllers
             _userService = new UserService();
         }
 
-        // Hiển thị trang đăng nhập
+        // Hiển thị trang đăng nhập 
         public ActionResult Login()
         {
             return View();
@@ -33,7 +34,8 @@ namespace KiwiFastfood.Controllers
                 if (result.success == true)
                 {
                     Session["UserToken"] = result.data.token;
-                    return RedirectToAction("Index", "Home");
+
+                    return RedirectToAction("Home", "Home");
                 }
                 else
                 {
@@ -62,10 +64,10 @@ namespace KiwiFastfood.Controllers
             {
                 var userData = new
                 {
+                    hoTen,
                     taiKhoan,
                     matKhau,
                     email,
-                    hoTen
                 };
 
                 var response = await _userService.RegisterAsync(userData);
@@ -95,7 +97,6 @@ namespace KiwiFastfood.Controllers
             {
                 var response = await _userService.GetUserProfileAsync();
                 dynamic userProfile = JObject.Parse(response);
-
                 return View(userProfile);
             }
             catch (Exception ex)

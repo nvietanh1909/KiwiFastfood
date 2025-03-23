@@ -32,6 +32,11 @@ namespace KiwiFastfood.Services
             return responseData;
         }
 
+        public void SetToken(string token)
+        {
+            base.SetToken(token);
+        }
+
         public async Task<string> GetUserProfileAsync()
         {
             if (string.IsNullOrEmpty(_token))
