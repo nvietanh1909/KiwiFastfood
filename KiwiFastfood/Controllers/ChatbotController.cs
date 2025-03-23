@@ -13,6 +13,8 @@ namespace KiwiFastfood.Controllers
         private readonly ChatbotService _chatbotService;
         private const string ChatHistoryKey = "ChatHistory";
 
+        private bool _isLogin { get => Session["UserToken"] != null; }
+
         public ChatbotController()
         {
             _chatbotService = new ChatbotService();
@@ -20,35 +22,43 @@ namespace KiwiFastfood.Controllers
 
         public ActionResult Chat()
         {
-            return View();
+            if (_isLogin)
+            {
+                return View();
+            }
+            return RedirectToAction("Login", "User");
         }
 
         // Gửi tin nhắn đến chatbot
         [HttpPost]
         public async Task<ActionResult> SendMessage(string message)
         {
-            if (string.IsNullOrEmpty(message))
+            if (_isLogin)
             {
-                return Json(new { success = false, message = "Tin nhắn không được để trống!" });
-            }
+                if (string.IsNullOrEmpty(message))
+                {
+                    return Json(new { success = false, message = "Tin nhắn không được để trống!" });
+                }
 
-            try
-            {
-                // Lưu tin nhắn của người dùng vào lịch sử
-                SaveMessageToHistory("user", message);
-                
-                // Gửi tin nhắn và nhận phản hồi từ chatbot
-                string response = await _chatbotService.SendMessageAsync(message);
-                
-                // Lưu phản hồi vào lịch sử
-                SaveMessageToHistory("bot", response);
-                
-                return Json(new { success = true, data = response });
+                try
+                {
+                    // Lưu tin nhắn của người dùng vào lịch sử
+                    SaveMessageToHistory("user", message);
+
+                    // Gửi tin nhắn và nhận phản hồi từ chatbot
+                    string response = await _chatbotService.SendMessageAsync(message);
+
+                    // Lưu phản hồi vào lịch sử
+                    SaveMessageToHistory("bot", response);
+
+                    return Json(new { success = true, data = response });
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, message = ex.Message });
+                }
             }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
+            return RedirectToAction("Login", "User");
         }
         
         [HttpGet]

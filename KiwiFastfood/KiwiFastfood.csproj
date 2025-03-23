@@ -136,6 +136,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\ChatbotController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -145,6 +146,7 @@
     <Compile Include="Services\AdminService.cs" />
     <Compile Include="Services\ApiService.cs" />
     <Compile Include="Services\ChatbotService.cs" />
+    <Compile Include="Services\ProductService.cs" />
     <Compile Include="Services\UserService.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -201,6 +203,7 @@
     <Content Include="Views\Home\Home.cshtml" />
     <Content Include="Views\Chatbot\Chat.cshtml" />
     <Content Include="Views\Admin\Users.cshtml" />
+    <Content Include="Views\Product\Product.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
