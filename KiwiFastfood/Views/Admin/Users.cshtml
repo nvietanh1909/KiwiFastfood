@@ -1,0 +1,68 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "Danh Sách Người Dùng";
+    int currentPage = Model?.currentPage ?? 1;
+    int totalPages = Model?.totalPages ?? 1;
+}
+
+<h2 class="text-center">Danh Sách Người Dùng</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>Họ và Tên</th>
+            <th>Email</th>
+            <th>Quyền</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model?.data?.users != null)
+        {
+            foreach (var user in Model.data.users)
+            {
+                <tr>
+                    <td>@user.hoTen</td>
+                    <td>@user.email</td>
+                    <td>@user.role</td>
+                    <td>
+                        <a href="@Url.Action("Edit", "User", new { id = user.id })" class="btn btn-sm btn-warning">Sửa</a>
+                        <a href="@Url.Action("Delete", "User", new { id = user.id })" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa?');">Xóa</a>
+                    </td>
+                </tr>
+            }
+        }
+
+        else
+        {
+            <tr><td colspan="6" class="text-center">Không có dữ liệu</td></tr>
+        }
+    </tbody>
+</table>
+
+<!-- Phân trang -->
+<nav>
+    <ul class="pagination justify-content-center">
+        @if (currentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Users", new { page = currentPage - 1, limit = 10 })">Trước</a>
+            </li>
+        }
+
+        @for (int i = 1; i <= totalPages; i++)
+        {
+            <li class="page-item @(i == currentPage ? "active" : "")">
+                <a class="page-link" href="@Url.Action("Users", new { page = i, limit = 10 })">@i</a>
+            </li>
+        }
+
+        @if (currentPage < totalPages)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Users", new { page = currentPage + 1, limit = 10 })">Tiếp</a>
+            </li>
+        }
+    </ul>
+</nav>

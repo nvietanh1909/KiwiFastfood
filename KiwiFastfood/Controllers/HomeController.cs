@@ -39,33 +39,7 @@ namespace KiwiFastfood.Controllers
 
         public async Task<ActionResult> Home()
         {
-            try
-            {
-                // Kiểm tra trạng thái đăng nhập
-                if (Session["UserToken"] == null)
-                {
-                    return RedirectToAction("Login", "User");
-                }
-
-                // Lấy token từ session và gán cho UserService
-                string token = Session["UserToken"].ToString();
-                _userService.SetToken(token);
-
-                // Lấy thông tin người dùng
-                var response = await _userService.GetUserProfileAsync();
-                dynamic userProfile = JObject.Parse(response);
-
-                // Truyền thông tin người dùng sang view
-                ViewBag.UserProfile = userProfile.data;
-                
-                return View();
-            }
-            catch (Exception ex)
-            {
-                // Xử lý lỗi nếu có
-                ViewBag.ErrorMessage = "Không thể lấy thông tin người dùng: " + ex.Message;
-                return View();
-            }
+            return View();
         }
     }
 }
