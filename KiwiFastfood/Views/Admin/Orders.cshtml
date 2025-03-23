@@ -1,0 +1,71 @@
+﻿@model dynamic
+@{
+    ViewBag.Title = "Danh Sách Đơn Hàng";
+    int currentPage = Model?.currentPage ?? 1;
+    int totalPages = Model?.totalPages ?? 1;
+}
+
+<h2 class="text-center">Danh Sách Đơn Hàng</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>Mã khách hàng</th>
+            <th>Ngày đặt hàng</th>
+            <th>Ngày giao hàng</th>
+            <th>Tình trạng thanh toán</th>
+            <th>Tình trạng giao hàng</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model?.data?.users != null)
+        {
+            foreach (var order in Model.data.orders)
+            {
+                <tr>
+                    <td>@order.MaKH</td>
+                    <td>@order.startDate</td>
+                    <td>@order.endDate</td>
+                    <td>@order.daThanhToan</td>
+                    <td>@order.tinhTrangGiaoHang</td>
+                    <td>
+                        <a href="@Url.Action("Edit", "User", new { id = order.id })" class="btn btn-sm btn-warning">Sửa</a>
+                        <a href="@Url.Action("Delete", "User", new { id = order.id })" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa?');">Xóa</a>
+                    </td>
+                </tr>
+            }
+        }
+
+        else
+        {
+            <tr><td colspan="6" class="text-center">Không có dữ liệu</td></tr>
+        }
+    </tbody>
+</table>
+
+<!-- Phân trang -->
+<nav>
+    <ul class="pagination justify-content-center">
+        @if (currentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Orders", new { page = currentPage - 1, limit = 10 })">Trước</a>
+            </li>
+        }
+
+        @for (int i = 1; i <= totalPages; i++)
+        {
+            <li class="page-item @(i == currentPage ? "active" : "")">
+                <a class="page-link" href="@Url.Action("Orders", new { page = i, limit = 10 })">@i</a>
+            </li>
+        }
+
+        @if (currentPage < totalPages)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Orders", new { page = currentPage + 1, limit = 10 })">Tiếp</a>
+            </li>
+        }
+    </ul>
+</nav>

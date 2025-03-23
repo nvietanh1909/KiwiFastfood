@@ -1,0 +1,46 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "Chỉnh Sửa Thông Tin Người Dùng";
+}
+
+<h2 class="text-center">Chỉnh Sửa Thông Tin Người Dùng</h2>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.ErrorMessage
+    </div>
+}
+
+<form method="post" action="@Url.Action("EditUser", "Admin", new { id = ViewBag.UserId })">
+    <div class="form-group">
+        <label for="hoTen">Họ và Tên:</label>
+        <input type="text" class="form-control" id="hoTen" name="hoTen" >
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" class="form-control" id="email" name="email" >
+    </div>
+
+    <div class="form-group">
+        <label for="dienThoai">Điện thoại:</label>
+        <input type="text" class="form-control" id="dienThoai" name="dienThoai" >
+    </div>
+
+    <div class="form-group">
+        <label for="diaChi">Địa chỉ:</label>
+        <input type="text" class="form-control" id="diaChi" name="diaChi" >
+    </div>
+
+    <div class="form-group">
+        <label for="ngaySinh">Ngày sinh:</label>
+        <input type="date" class="form-control" id="ngaySinh" name="ngaySinh" >
+    </div>
+
+    <div class="form-group mt-2">
+        <button type="submit" class="btn btn-primary">Cập nhật</button>
+        <a href="@Url.Action("Users", "Admin")" class="btn btn-secondary">Quay lại</a>
+    </div>
+</form>
