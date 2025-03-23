@@ -6,12 +6,17 @@ using System.Web.Mvc;
 using KiwiFastfood.Services;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace KiwiFastfood.Controllers
 {
     public class HomeController : Controller
     {
         private readonly UserService _userService;
+        private readonly ProductService _productService = new ProductService();
+
+        private bool _isLogin { get => Session["UserToken"] != null; }
+
 
         public HomeController()
         {
@@ -37,9 +42,31 @@ namespace KiwiFastfood.Controllers
             return View();
         }
 
-        public async Task<ActionResult> Home()
+        public async Task<ActionResult> Home(int page = 1, int limit = 10)
         {
-            return View();
+            try
+            {
+                if (_isLogin)
+                {
+                    string token = Session["UserToken"].ToString();
+                    _productService.SetToken(token);
+
+                    var response = await _productService.GetAllProductsAsync(new { page, limit });
+                    dynamic result = JsonConvert.DeserializeObject(response);
+
+                    ViewBag.Products = result.data.products;
+                    ViewBag.Pagination = result.data.pagination;
+
+                    return View();
+                }
+                return RedirectToAction("Login", "User");
+
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "Không thể tải danh sách sản phẩm: " + ex.Message;
+                return View();
+            }
         }
     }
 }
