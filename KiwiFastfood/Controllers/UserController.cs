@@ -9,11 +9,11 @@ namespace KiwiFastfood.Controllers
 {
     public class UserController : Controller
     {
-        private readonly UserService _userService;
+        private readonly UserService _userService = new UserService();
 
         public UserController()
         {
-            _userService = new UserService();
+            if(_userService == null) _userService = new UserService();
         }
 
         // Hiển thị trang đăng nhập 
@@ -34,8 +34,8 @@ namespace KiwiFastfood.Controllers
                 if (result.success == true)
                 {
                     Session["UserToken"] = result.data.token;
-
-                    return RedirectToAction("Home", "Home");
+                    if (result.data.role == "admin") Session["Admin"] = true;
+                    return RedirectToAction("Users", "Admin");
                 }
                 else
                 {
@@ -95,9 +95,13 @@ namespace KiwiFastfood.Controllers
         {
             try
             {
+                string token = Session["UserToken"].ToString();
+                _userService.SetToken(token);
+
                 var response = await _userService.GetUserProfileAsync();
                 dynamic userProfile = JObject.Parse(response);
-                return View(userProfile);
+                ViewBag.UserProfile = userProfile.data;
+                return View();
             }
             catch (Exception ex)
             {
