@@ -1,0 +1,24 @@
+﻿@{
+    ViewBag.Title = "Category";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="category-list">
+    @if (ViewBag.Categories != null)
+    {
+        foreach (var category in ViewBag.Categories)
+        {
+            <div class="category-card">
+                <div class="category-content">
+                    <div class="category-name">@category.tenLoai</div>
+                    <a href="@Url.Action("Details", "Category", new { id = category.id })" class="details-button">Xem chi tiết</a>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p>Không có danh mục nào để hiển thị.</p>
+    }
+</div>
+

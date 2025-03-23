@@ -55,7 +55,13 @@
                 <ul class="navbar-nav">
                     @if (Session["UserToken"] != null)
                     {
-                        <li>@Html.ActionLink("Trang cá nhân", "Profile", "User", new { area = "" }, new { @class = "nav-link" })</li>
+
+
+                        if (Session["Admin"] != null)
+                        {
+                            <li>@Html.ActionLink("Trang admin", "User", "Admin", new { area = "" }, new { @class = "nav-link" })</li>
+                        }
+                        <li>@Html.ActionLink("Thông tin cá nhân", "Profile", "User", new { area = "" }, new { @class = "nav-link" })</li>
                         <li>@Html.ActionLink("Đăng xuất", "Logout", "User", new { area = "" }, new { @class = "nav-link" })</li>
                     }
                     else

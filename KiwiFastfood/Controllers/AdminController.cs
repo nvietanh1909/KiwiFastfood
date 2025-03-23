@@ -18,7 +18,7 @@ namespace KiwiFastfood.Controllers
             _adminService = new AdminService();
         }
 
-        public async Task<ActionResult> Users(int page = 1, int limit = 10)
+        public async Task<ActionResult> User(int page = 1, int limit = 10)
         {
             string token = Session["UserToken"].ToString();
             _adminService.SetToken(token);
