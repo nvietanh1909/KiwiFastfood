@@ -14,6 +14,7 @@
             <th>Họ và Tên</th>
             <th>Email</th>
             <th>Quyền</th>
+            <th>Ngày khởi tạo</th>
             <th>Thao tác</th>
         </tr>
     </thead>
@@ -26,9 +27,11 @@
                     <td>@user.hoTen</td>
                     <td>@user.email</td>
                     <td>@user.role</td>
+                    <td>@user.createdAt</td>
                     <td>
-                        <a href="@Url.Action("Edit", "User", new { id = user.id })" class="btn btn-sm btn-warning">Sửa</a>
-                        <a href="@Url.Action("Delete", "User", new { id = user.id })" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa?');">Xóa</a>
+                        <a href="@Url.Action("EditUser", "Admin", new { id = user.id })" class="btn btn-sm btn-warning">Sửa</a>
+                        <a href="@Url.Action("DetailUser", "Admin", new { id = user.id })" class="btn btn-sm btn-primary">Chi tiết</a>
+                        <a href="@Url.Action("DeleteUser", "Admin", new { id = user.id })" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa?');">Xóa</a>
                     </td>
                 </tr>
             }
