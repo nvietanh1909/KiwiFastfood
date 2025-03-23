@@ -1,10 +1,10 @@
 ﻿@model dynamic
-
 @{
-    ViewBag.Title = "Danh Sách Người Dùng";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
     int currentPage = Model?.currentPage ?? 1;
     int totalPages = Model?.totalPages ?? 1;
 }
+
 
 <h2 class="text-center">Danh Sách Người Dùng</h2>
 
@@ -66,3 +66,5 @@
         }
     </ul>
 </nav>
+
+

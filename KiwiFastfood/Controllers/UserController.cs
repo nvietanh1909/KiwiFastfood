@@ -34,7 +34,7 @@ namespace KiwiFastfood.Controllers
                 if (result.success == true)
                 {
                     Session["UserToken"] = result.data.token;
-                    if (result.data.role == "admin") Session["Admin"] = true;
+                    if (result.data.user.role == "admin") { Session["Admin"] = result.data.user.role; }
                     return RedirectToAction("Home", "Home");
                 }
                 else
