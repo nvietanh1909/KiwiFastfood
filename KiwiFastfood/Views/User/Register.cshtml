@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Login";
+    ViewBag.Title = "Đăng Ký";
     Layout = null;
 }
 
@@ -18,7 +18,7 @@
             margin: 0;
         }
 
-        .login-container {
+        .register-container {
             background-color: white;
             padding: 2rem;
             border-radius: 8px;
@@ -45,6 +45,7 @@
         }
 
         input[type="text"],
+        input[type="email"],
         input[type="password"] {
             width: 100%;
             padding: 0.75rem;
@@ -55,16 +56,30 @@
         }
 
             input[type="text"]:focus,
+            input[type="email"]:focus,
             input[type="password"]:focus {
                 outline: none;
                 border-color: #007bff;
                 box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
             }
 
-        .error-message {
-            color: #dc3545;
+        .alert {
+            padding: 0.75rem;
+            border-radius: 4px;
             margin-bottom: 1rem;
             text-align: center;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
 
         button {
@@ -83,47 +98,67 @@
                 background-color: #0056b3;
             }
 
-        .register-link {
+        .login-link {
             text-align: center;
             margin-top: 1rem;
             color: #666;
         }
 
-            .register-link a {
+            .login-link a {
                 color: #007bff;
                 text-decoration: none;
             }
 
-                .register-link a:hover {
+                .login-link a:hover {
                     text-decoration: underline;
                 }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Đăng nhập</h2>
+    <div class="register-container">
+        <h2>Đăng Ký</h2>
 
-        @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+        @if (ViewBag.ErrorMessage != null)
         {
-            <p class="error-message">@ViewBag.ErrorMessage</p>
+            <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
         }
 
-        <form method="post" action="@Url.Action("Login", "User")">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+        }
+
+        <form method="post" action="@Url.Action("Register", "User")">
             <div class="form-group">
-                <label for="taiKhoan">Tài khoản:</label>
-                <input type="text" name="taiKhoan" id="taiKhoan" required />
+                <label for="taiKhoan">Tài khoản</label>
+                <input type="text" id="taiKhoan" name="taiKhoan" required />
             </div>
 
             <div class="form-group">
-                <label for="matKhau">Mật khẩu:</label>
-                <input type="password" name="matKhau" id="matKhau" required />
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required />
             </div>
 
-            <button type="submit">Đăng nhập</button>
+            <div class="form-group">
+                <label for="hoTen">Họ và Tên</label>
+                <input type="text" id="hoTen" name="hoTen" required />
+            </div>
+
+            <div class="form-group">
+                <label for="matKhau">Mật khẩu</label>
+                <input type="password" id="matKhau" name="matKhau" required />
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Nhập lại mật khẩu</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required />
+            </div>
+
+            <button type="submit">Đăng Ký</button>
         </form>
 
-        <p class="register-link">
-            Chưa có tài khoản? <a href="@Url.Action("Register", "User")">Đăng ký</a>
+        <p class="login-link">
+            Bạn đã có tài khoản? <a href="@Url.Action("Login", "User")">Đăng nhập ngay</a>
         </p>
     </div>
 </body>

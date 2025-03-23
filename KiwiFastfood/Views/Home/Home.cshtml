@@ -1,0 +1,40 @@
+﻿@{
+    ViewBag.Title = "Trang chủ";
+}
+
+<div class="container mt-4">
+    <h2>Chào mừng đến với Kiwi Fastfood</h2>
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    @if (ViewBag.UserProfile != null)
+    {
+        <div class="card mt-4">
+            <div class="card-header">
+                <h4>Thông tin người dùng</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p><strong>Họ tên:</strong> @ViewBag.UserProfile.hoTen</p>
+                        <p><strong>Tài khoản:</strong> @ViewBag.UserProfile.taiKhoan</p>
+                        <p><strong>Email:</strong> @ViewBag.UserProfile.email</p>
+                        @if (ViewBag.UserProfile.diaChi != null)
+                        {
+                            <p><strong>Địa chỉ:</strong> @ViewBag.UserProfile.diaChi</p>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="@Url.Action("EditProfile", "User")" class="btn btn-primary">Cập nhật thông tin</a>
+            </div>
+        </div>
+    }
+</div>
+
