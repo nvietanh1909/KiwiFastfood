@@ -3,22 +3,32 @@
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<div class="category-list">
-    @if (ViewBag.Categories != null)
-    {
-        foreach (var category in ViewBag.Categories)
+<h2 class="text-center">Danh Sách Danh Mục</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>Tên loại</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewBag.Categories != null)
         {
-            <div class="category-card">
-                <div class="category-content">
-                    <div class="category-name">@category.tenLoai</div>
-                    <a href="@Url.Action("Details", "Category", new { id = category.id })" class="details-button">Xem chi tiết</a>
-                </div>
-            </div>
+            foreach (var category in ViewBag.Categories)
+            {
+                <tr>
+                    <td>@category.tenLoai</td>
+                    <td>
+                        <a href="@Url.Action("DetailCategory", "Category", new { id = category.id })" class="btn btn-sm btn-primary">Chi tiết</a>
+                    </td>
+                </tr>
+            }
         }
-    }
-    else
-    {
-        <p>Không có danh mục nào để hiển thị.</p>
-    }
-</div>
+        else
+        {
+            <tr><td colspan="6" class="text-center">Không có dữ liệu</td></tr>
+        }
+    </tbody>
+</table>
 

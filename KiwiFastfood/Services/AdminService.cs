@@ -12,6 +12,8 @@ namespace KiwiFastfood.Services
 {
     public class AdminService : ApiService
     {
+        //*--------------------Quản lý người dùng-------------------*
+        // API lấy danh sách người dùng
         public async Task<string> GetAllUsersAsync(int page, int limit)
         {
             if (string.IsNullOrEmpty(_token))
@@ -24,18 +26,7 @@ namespace KiwiFastfood.Services
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> GetAllOrdersAsync(int page, int limit)
-        {
-            if (string.IsNullOrEmpty(_token))
-                throw new Exception("No authentication token available. Please login first.");
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
-
-            var response = await _httpClient.GetAsync($"admin/orders?page={page}&limit={limit}");
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
-        }
-
+        // API xem chi tiết người dùng
         public async Task<string> GetUsersDetail(string userID)
         {
             if (string.IsNullOrEmpty(_token))
@@ -48,6 +39,7 @@ namespace KiwiFastfood.Services
             return await response.Content.ReadAsStringAsync();
         }
 
+        // API cập nhật người dùng
         public async Task<string> UpdateUserAsync(Dictionary<string, object> userData, string userID)
         {
             if (string.IsNullOrEmpty(_token))
@@ -71,6 +63,21 @@ namespace KiwiFastfood.Services
 
             return await response.Content.ReadAsStringAsync();
         }
+
+        //*--------------------Quản lý đơn hàng-------------------*
+        // API lấy danh sách đơn hàng
+        public async Task<string> GetAllOrdersAsync(int page, int limit)
+        {
+            if (string.IsNullOrEmpty(_token))
+                throw new Exception("No authentication token available. Please login first.");
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+
+            var response = await _httpClient.GetAsync($"admin/orders?page={page}&limit={limit}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+
 
         public void SetToken(string token)
         {

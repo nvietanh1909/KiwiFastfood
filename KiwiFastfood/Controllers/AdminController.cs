@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -19,6 +20,7 @@ namespace KiwiFastfood.Controllers
             _adminService = new AdminService();
         }
 
+        // Xem danh sách người dùng
         public async Task<ActionResult> User(int page = 1, int limit = 10)
         {
             string token = Session["UserToken"].ToString();
@@ -28,7 +30,8 @@ namespace KiwiFastfood.Controllers
             return View(users);
         }
 
-        public async Task<ActionResult> Orders(int page = 1, int limit = 20)
+        // Xem danh sách đơn hàng
+        public async Task<ActionResult> Order(int page = 1, int limit = 20)
         {
             string token = Session["UserToken"].ToString();
             _adminService.SetToken(token);
@@ -37,6 +40,7 @@ namespace KiwiFastfood.Controllers
             return View(orders);
         }
 
+        // Xem chi tiết người dùng
         public async Task<ActionResult> DetailUser(string id)
         {
             try
@@ -45,21 +49,20 @@ namespace KiwiFastfood.Controllers
                 _adminService.SetToken(token);
 
                 // Lấy thông tin user từ API
-                var response = await _adminService.GetAllUsersAsync(1, 1);
-                var users = JsonConvert.DeserializeObject<dynamic>(response);
+                var response = await _adminService.GetUsersDetail(id);
+                var result = JsonConvert.DeserializeObject<dynamic>(response);
 
-                // Tìm user muốn xem chi tiết
-                var user = ((JArray)users.data.users)
-                    .FirstOrDefault(u => u["id"].ToString() == id);
-
-                if (user == null)
+                if (result.success == true && result.data != null)
                 {
-                    return HttpNotFound();
+                    ViewBag.User = result.data;
+                    ViewBag.Id = id;
+                    return View();
                 }
-
-                ViewBag.User = user;
-                ViewBag.Id = id;
-                return View();
+                else
+                {
+                    TempData["ErrorMessage"] = "Không tìm thấy thông tin người dùng.";
+                    return RedirectToAction("User");
+                }
             }
             catch (Exception ex)
             {
@@ -68,6 +71,7 @@ namespace KiwiFastfood.Controllers
             }
         }
 
+        // Chỉnh sửa người dùng
         public async Task<ActionResult> EditUser(string id)
         {
             try
@@ -76,21 +80,20 @@ namespace KiwiFastfood.Controllers
                 _adminService.SetToken(token);
 
                 // Lấy thông tin user từ API
-                var response = await _adminService.GetAllUsersAsync(1, 1); 
-                var users = JsonConvert.DeserializeObject<dynamic>(response);
+                var response = await _adminService.GetUsersDetail(id);
+                var result = JsonConvert.DeserializeObject<dynamic>(response);
 
-                // Tìm user cần chỉnh sửa
-                var user = ((JArray)users.data.users)
-                    .FirstOrDefault(u => u["id"].ToString() == id);
-
-                if (user == null)
+                if (result.success == true && result.data != null)
                 {
-                    return HttpNotFound();
+                    ViewBag.User = result.data;
+                    ViewBag.Id = id;
+                    return View();
                 }
-
-                ViewBag.User = user;
-                ViewBag.UserId = id;
-                return View();
+                else
+                {
+                    TempData["ErrorMessage"] = "Không tìm thấy thông tin người dùng.";
+                    return RedirectToAction("User");
+                }
             }
             catch (Exception ex)
             {
@@ -101,7 +104,7 @@ namespace KiwiFastfood.Controllers
 
         [HttpPost]
         public async Task<ActionResult> EditUser(string id, string hoTen = null, string email = null,
-         string dienThoai = null, string diaChi = null, string ngaySinh = null)
+        string dienThoai = null, string diaChi = null, string ngaySinh = null)
         {
             try
             {
@@ -130,7 +133,7 @@ namespace KiwiFastfood.Controllers
                 if (result.success == true)
                 {
                     TempData["SuccessMessage"] = "Cập nhật thông tin thành công!";
-                    return RedirectToAction("Users");
+                    return RedirectToAction("User");
                 }
                 else
                 {

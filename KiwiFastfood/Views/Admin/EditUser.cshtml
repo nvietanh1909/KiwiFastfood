@@ -13,34 +13,34 @@
     </div>
 }
 
-<form method="post" action="@Url.Action("EditUser", "Admin", new { id = ViewBag.UserId })">
+<form method="post" action="@Url.Action("EditUser", "Admin", new { id = ViewBag.Id })">
     <div class="form-group">
         <label for="hoTen">Họ và Tên:</label>
-        <input type="text" class="form-control" id="hoTen" name="hoTen" >
+        <input type="text" class="form-control" id="hoTen" name="hoTen" value="@ViewBag.User.hoTen" >
     </div>
 
     <div class="form-group">
         <label for="email">Email:</label>
-        <input type="email" class="form-control" id="email" name="email" >
+        <input type="email" class="form-control" id="email" name="email" value="@ViewBag.User.email" >
     </div>
 
     <div class="form-group">
         <label for="dienThoai">Điện thoại:</label>
-        <input type="text" class="form-control" id="dienThoai" name="dienThoai" >
+        <input type="text" class="form-control" id="dienThoai" name="dienThoai" value="@ViewBag.User.dienThoaiKH">
     </div>
 
     <div class="form-group">
         <label for="diaChi">Địa chỉ:</label>
-        <input type="text" class="form-control" id="diaChi" name="diaChi" >
+        <input type="text" class="form-control" id="diaChi" name="diaChi" value="@ViewBag.User.diaChiKH" >
     </div>
 
     <div class="form-group">
         <label for="ngaySinh">Ngày sinh:</label>
-        <input type="date" class="form-control" id="ngaySinh" name="ngaySinh" >
+        <input type="date" class="form-control" id="ngaySinh" name="ngaySinh" value="@ViewBag.User.ngaySinh" >
     </div>
 
     <div class="form-group mt-2">
         <button type="submit" class="btn btn-primary">Cập nhật</button>
-        <a href="@Url.Action("Users", "Admin")" class="btn btn-secondary">Quay lại</a>
+        <a href="@Url.Action("User", "Admin")" class="btn btn-secondary">Quay lại</a>
     </div>
 </form>

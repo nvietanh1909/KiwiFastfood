@@ -203,14 +203,14 @@
     <Content Include="Views\User\Profile.cshtml" />
     <Content Include="Views\Home\Home.cshtml" />
     <Content Include="Views\Chatbot\Chat.cshtml" />
-    <Content Include="Views\Admin\Users.cshtml" />
-    <Content Include="Views\Admin\Orders.cshtml" />
     <Content Include="Views\Admin\EditUser.cshtml" />
     <Content Include="Views\Admin\DetailUser.cshtml" />
     <Content Include="Views\Product\Product.cshtml" />
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
     <Content Include="Views\Admin\User.cshtml" />
     <Content Include="Views\Category\Category.cshtml" />
+    <Content Include="Views\Admin\Order.cshtml" />
+    <Content Include="Views\Category\DetailCategory.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

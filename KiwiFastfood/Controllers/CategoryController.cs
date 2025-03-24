@@ -1,11 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using KiwiFastfood.Services;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Http.Results;
 using System.Web.Mvc;
-using KiwiFastfood.Services;
 
 namespace KiwiFastfood.Controllers
 {
@@ -19,6 +21,7 @@ namespace KiwiFastfood.Controllers
             _categoryService = new CategoryService();
         }
 
+        // Xem danh sách danh mục
         public async Task<ActionResult> Category()
         {
             if (_isLogin)
@@ -43,6 +46,40 @@ namespace KiwiFastfood.Controllers
             }
             return RedirectToAction("Login", "User");
         }
-        
+
+        //Xem chi tiết danh mục
+        public async Task<ActionResult> DetailCategory(string id)
+        {
+            if (_isLogin)
+            {
+                try
+                {
+                    string token = Session["UserToken"].ToString();
+                    _categoryService.SetToken(token);
+
+                    // Lấy thông tin category từ API
+                    var response = await _categoryService.GetCategoryByIdAsync(id);
+                    var result = JsonConvert.DeserializeObject<dynamic>(response);
+
+                    if (result.success == true && result.data != null)
+                    {
+                        ViewBag.Category = result.data.ToObject<List<dynamic>>();
+                        ViewBag.Id = id;
+                        return View();
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Không tìm thấy thông tin người dùng.";
+                        return RedirectToAction("Category");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.ErrorMessage = "Lỗi: " + ex.Message;
+                    return View();
+                }
+            }
+            return RedirectToAction("Login", "User");
+        }
     }
 }

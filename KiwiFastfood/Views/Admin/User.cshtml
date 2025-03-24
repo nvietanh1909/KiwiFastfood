@@ -1,5 +1,6 @@
 ﻿@model dynamic
 @{
+    ViewBag.Title = "Danh Sách Người Dùng";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
     int currentPage = Model?.currentPage ?? 1;
     int totalPages = Model?.totalPages ?? 1;
@@ -50,21 +51,21 @@
         @if (currentPage > 1)
         {
             <li class="page-item">
-                <a class="page-link" href="@Url.Action("Users", new { page = currentPage - 1, limit = 10 })">Trước</a>
+                <a class="page-link" href="@Url.Action("User", new { page = currentPage - 1, limit = 10 })">Trước</a>
             </li>
         }
 
         @for (int i = 1; i <= totalPages; i++)
         {
             <li class="page-item @(i == currentPage ? "active" : "")">
-                <a class="page-link" href="@Url.Action("Users", new { page = i, limit = 10 })">@i</a>
+                <a class="page-link" href="@Url.Action("User", new { page = i, limit = 10 })">@i</a>
             </li>
         }
 
         @if (currentPage < totalPages)
         {
             <li class="page-item">
-                <a class="page-link" href="@Url.Action("Users", new { page = currentPage + 1, limit = 10 })">Tiếp</a>
+                <a class="page-link" href="@Url.Action("User", new { page = currentPage + 1, limit = 10 })">Tiếp</a>
             </li>
         }
     </ul>
