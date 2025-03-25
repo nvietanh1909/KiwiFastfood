@@ -11,6 +11,8 @@ namespace KiwiFastfood.Controllers
     {
         private readonly UserService _userService = new UserService();
 
+        private bool _isLogin { get => Session["UserToken"] != null; }
+
         public UserController()
         {
             if(_userService == null) _userService = new UserService();
@@ -93,6 +95,8 @@ namespace KiwiFastfood.Controllers
         // Hiển thị thông tin cá nhân
         public async Task<ActionResult> Profile()
         {
+            if (!_isLogin) return RedirectToAction("Login", "User");
+
             try
             {
                 string token = Session["UserToken"].ToString();
@@ -120,6 +124,8 @@ namespace KiwiFastfood.Controllers
         [HttpPost]
         public async Task<ActionResult> EditProfile(string email, string hoTen, string diaChi)
         {
+            if (!_isLogin) return RedirectToAction("Login", "User");
+
             try
             {
                 var profileData = new
@@ -152,6 +158,8 @@ namespace KiwiFastfood.Controllers
         // Hiển thị trang đổi mật khẩu
         public ActionResult ChangePassword()
         {
+            if (!_isLogin) return RedirectToAction("Login", "User");
+
             return View();
         }
 
@@ -159,6 +167,8 @@ namespace KiwiFastfood.Controllers
         [HttpPost]
         public async Task<ActionResult> ChangePassword(string matKhauCu, string matKhauMoi)
         {
+            if (!_isLogin) return RedirectToAction("Login", "User");
+
             try
             {
                 var passwordData = new

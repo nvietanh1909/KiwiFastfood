@@ -3,6 +3,7 @@
     ViewBag.Title = "Danh Sách Đơn Hàng";
     int currentPage = Model?.currentPage ?? 1;
     int totalPages = Model?.totalPages ?? 1;
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
 <h2 class="text-center">Danh Sách Đơn Hàng</h2>
@@ -69,3 +70,5 @@
         }
     </ul>
 </nav>
+
+
