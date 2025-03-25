@@ -56,6 +56,18 @@ namespace KiwiFastfood.Services
             return await response.Content.ReadAsStringAsync();
         }
 
+        public async Task<string> DeleteProductAsync(string id)
+        {
+            if (string.IsNullOrEmpty(_token))
+            {
+                throw new Exception("No authentication token available. Please login first.");
+            }
+
+            var response = await _httpClient.DeleteAsync($"products/{id}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+
         public async Task<string> AddRatingAsync(string productId, dynamic ratingData)
         {
             if (string.IsNullOrEmpty(_token))

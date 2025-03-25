@@ -1,0 +1,275 @@
+@{
+    ViewBag.Title = "Chi tiết đơn hàng - Kiwi Fastfood";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Chi tiết đơn hàng</h2>
+        <a href="@Url.Action("Order", "Order")" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại danh sách đơn hàng
+        </a>
+    </div>
+
+    <!-- Hiển thị thông báo -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (ViewBag.Order != null)
+    {
+        <div class="row">
+            <!-- Thông tin đơn hàng -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">Thông tin đơn hàng #@ViewBag.Order._id</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>Ngày đặt hàng:</strong>
+                            </div>
+                            <div class="col-md-6">
+                                @(ViewBag.Order.createdAt != null ? DateTime.Parse(ViewBag.Order.createdAt.ToString()).ToString("dd/MM/yyyy HH:mm") : "N/A")
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>Tổng tiền:</strong>
+                            </div>
+                            <div class="col-md-6">
+                                @String.Format("{0:N0}đ", ViewBag.Order.totalPrice)
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>Trạng thái:</strong>
+                            </div>
+                            <div class="col-md-6">
+                                @{
+                                    string statusClass = "badge bg-secondary";
+                                    string statusText = "Không xác định";
+
+                                    if (ViewBag.Order.status != null)
+                                    {
+                                        switch (ViewBag.Order.status.ToString().ToLower())
+                                        {
+                                            case "pending":
+                                                statusClass = "badge bg-warning text-dark";
+                                                statusText = "Đang xử lý";
+                                                break;
+                                            case "processing":
+                                                statusClass = "badge bg-info text-dark";
+                                                statusText = "Đang chuẩn bị";
+                                                break;
+                                            case "shipped":
+                                                statusClass = "badge bg-primary";
+                                                statusText = "Đang giao hàng";
+                                                break;
+                                            case "delivered":
+                                                statusClass = "badge bg-success";
+                                                statusText = "Đã giao hàng";
+                                                break;
+                                            case "cancelled":
+                                                statusClass = "badge bg-danger";
+                                                statusText = "Đã hủy";
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                }
+                                <span class="@statusClass">@statusText</span>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>Thanh toán:</strong>
+                            </div>
+                            <div class="col-md-6">
+                                @{
+                                    string paymentStatusClass = "badge bg-secondary";
+                                    string paymentStatusText = "Không xác định";
+
+                                    if (ViewBag.Order.paymentStatus != null)
+                                    {
+                                        switch (ViewBag.Order.paymentStatus.ToString().ToLower())
+                                        {
+                                            case "pending":
+                                                paymentStatusClass = "badge bg-warning text-dark";
+                                                paymentStatusText = "Chưa thanh toán";
+                                                break;
+                                            case "paid":
+                                                paymentStatusClass = "badge bg-success";
+                                                paymentStatusText = "Đã thanh toán";
+                                                break;
+                                            case "refunded":
+                                                paymentStatusClass = "badge bg-info";
+                                                paymentStatusText = "Đã hoàn tiền";
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                }
+                                <span class="@paymentStatusClass">@paymentStatusText</span>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>Phương thức thanh toán:</strong>
+                            </div>
+                            <div class="col-md-6">
+                                @ViewBag.Order.paymentMethod
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thông tin giao hàng -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">Thông tin giao hàng</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-2">
+                            <div class="col-md-4">
+                                <strong>Địa chỉ:</strong>
+                            </div>
+                            <div class="col-md-8">
+                                @ViewBag.Order.shippingAddress
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-4">
+                                <strong>Số điện thoại:</strong>
+                            </div>
+                            <div class="col-md-8">
+                                @ViewBag.Order.phoneNumber
+                            </div>
+                        </div>
+                        @if (ViewBag.Order.notes != null && !string.IsNullOrEmpty(ViewBag.Order.notes.ToString()))
+                        {
+                            <div class="row mb-2">
+                                <div class="col-md-4">
+                                    <strong>Ghi chú:</strong>
+                                </div>
+                                <div class="col-md-8">
+                                    @ViewBag.Order.notes
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chi tiết sản phẩm -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">Sản phẩm trong đơn hàng</h5>
+            </div>
+            <div class="card-body">
+                @if (ViewBag.Order.items != null && ViewBag.Order.items.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th>Giá</th>
+                                    <th>Số lượng</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in ViewBag.Order.items)
+                                {
+                                    <tr>
+                                        <td>@item.name</td>
+                                        <td>@String.Format("{0:N0}đ", item.price)</td>
+                                        <td>@item.quantity</td>
+                                        <td>@String.Format("{0:N0}đ", item.price * item.quantity)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Tổng cộng:</strong></td>
+                                    <td><strong>@String.Format("{0:N0}đ", ViewBag.Order.totalPrice)</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">Không có thông tin về sản phẩm trong đơn hàng.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Thao tác -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">Thao tác</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex gap-2">
+                    <a href="@Url.Action("Order", "Order")" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+
+                    @if (ViewBag.Order.status != null && 
+                         (ViewBag.Order.status.ToString().ToLower() == "pending" || ViewBag.Order.status.ToString().ToLower() == "processing") && 
+                         (ViewBag.Order.paymentStatus == null || ViewBag.Order.paymentStatus.ToString().ToLower() == "pending"))
+                    {
+                        using (Html.BeginForm("Cancel", "Order", FormMethod.Post, new { @class = "d-inline" }))
+                        {
+                            <input type="hidden" name="id" value="@ViewBag.Order._id" />
+                            <button type="submit" class="btn btn-danger" 
+                                    onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
+                                <i class="fas fa-times"></i> Hủy đơn hàng
+                            </button>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger">
+            Không tìm thấy thông tin đơn hàng hoặc bạn không có quyền truy cập đơn hàng này.
+        </div>
+        <a href="@Url.Action("Order", "Order")" class="btn btn-primary">
+            Quay lại danh sách đơn hàng
+        </a>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-dismiss alerts after 5 seconds
+        $(document).ready(function () {
+            setTimeout(function () {
+                $('.alert').alert('close');
+            }, 5000);
+        });
+    </script>
+} 

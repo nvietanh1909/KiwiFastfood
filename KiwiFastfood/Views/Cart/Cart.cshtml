@@ -1,0 +1,136 @@
+﻿@{
+    ViewBag.Title = "Giỏ hàng - Kiwi Fastfood";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-4">
+    <h2>Giỏ hàng của bạn</h2>
+
+    <!-- Hiển thị thông báo -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @ViewBag.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Kiểm tra giỏ hàng -->
+    @if (ViewBag.Cart != null && ViewBag.Cart.items != null && ViewBag.Cart.items.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Giá</th>
+                        <th>Số lượng</th>
+                        <th>Tổng</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ViewBag.Cart.items)
+                    {
+                        <tr>
+                            <td>@item.product.tenMon</td>
+                            <td>@String.Format("{0:N0}đ", item.product.giaBan)</td>
+                            <td>
+                                @using (Html.BeginForm("Update", "Cart", FormMethod.Post))
+                                {
+                                    <input type="hidden" name="productId" value="@item.product._id" />
+                                    <div class="d-flex align-items-center">
+                                        <input type="number" name="quantity" value="@(item.quantity != null ? item.quantity : 1)" min="1" class="form-control" style="width: 80px;" />
+                                        <button type="submit" class="btn btn-primary btn-sm ms-2">Cập nhật</button>
+                                    </div>
+                                }
+                            </td>
+                            <td>@String.Format("{0:N0}đ", (item.quantity != null ? item.quantity : 1) * item.product.giaBan)</td>
+                            <td>
+                                @using (Html.BeginForm("Remove", "Cart", FormMethod.Post))
+                                {
+                                    <input type="hidden" name="productId" value="@item.product._id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-end"><strong>Tổng cộng:</strong></td>
+                        <td>
+                            @{
+                                decimal total = 0;
+                                foreach (var item in ViewBag.Cart.items)
+                                {
+                                    int quantity = item.quantity != null ? item.quantity : 1;
+                                    total += quantity * (decimal)item.product.giaBan;
+                                }
+                            }
+                            @String.Format("{0:N0}đ", total)
+                        </td>
+                        <td>
+                            @using (Html.BeginForm("Clear", "Cart", FormMethod.Post))
+                            {
+                                <button type="submit" class="btn btn-danger btn-sm">Xóa toàn bộ</button>
+                            }
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="mt-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <a href="@Url.Action("Product", "Product")" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Tiếp tục mua sắm
+                    </a>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="@Url.Action("Create", "Order")" class="btn btn-primary">
+                            <i class="fas fa-shopping-cart"></i> Đặt hàng
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-center my-5">
+            <i class="fas fa-shopping-cart fa-3x text-muted"></i>
+            <p class="mt-3">Giỏ hàng của bạn đang trống.</p>
+            <a href="@Url.Action("Product", "Product")" class="btn btn-primary">Mua sắm ngay</a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-dismiss alerts after 5 seconds
+        $(document).ready(function () {
+            setTimeout(function () {
+                $('.alert').alert('close');
+            }, 5000);
+        });
+    </script>
+}

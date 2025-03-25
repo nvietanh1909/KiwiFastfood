@@ -1,0 +1,186 @@
+﻿@{
+    ViewBag.Title = "Thanh toán - Kiwi Fastfood";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-4">
+    <h2>Thanh toán đơn hàng</h2>
+
+    <!-- Hiển thị thông báo -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (ViewBag.Cart != null && ViewBag.Cart.items != null && ViewBag.Cart.items.Count > 0)
+    {
+        <div class="row">
+            <!-- Thông tin đơn hàng -->
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">Thông tin đơn hàng</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Sản phẩm</th>
+                                        <th>Giá</th>
+                                        <th>Số lượng</th>
+                                        <th>Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        decimal totalAmount = 0;
+                                    }
+
+                                    @foreach (var item in ViewBag.Cart.items)
+                                    {
+                                        decimal itemTotal = (item.quantity != null ? item.quantity : 1) * item.product.giaBan;
+                                        totalAmount += itemTotal;
+
+                                        <tr>
+                                            <td>@item.product.tenMon</td>
+                                            <td>@String.Format("{0:N0}đ", item.product.giaBan)</td>
+                                            <td>@(item.quantity != null ? item.quantity : 1)</td>
+                                            <td>@String.Format("{0:N0}đ", itemTotal)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="text-end"><strong>Tổng cộng:</strong></td>
+                                        <td><strong>@String.Format("{0:N0}đ", totalAmount)</strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form thanh toán -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">Thông tin thanh toán</h5>
+                    </div>
+                    <div class="card-body">
+                        @using (Html.BeginForm("Create", "Order", FormMethod.Post, new { @class = "needs-validation", @novalidate = "novalidate" }))
+                        {
+                            <div class="mb-3">
+                                <label for="shippingAddress" class="form-label">Địa chỉ đường/số nhà <span class="text-danger">*</span></label>
+                                <textarea name="shippingAddress" id="shippingAddress" class="form-control" rows="2" required></textarea>
+                                <div class="invalid-feedback">
+                                    Vui lòng nhập địa chỉ giao hàng.
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="city" class="form-label">Thành phố</label>
+                                    <input type="text" name="city" id="city" class="form-control" value="Thành phố Hồ Chí Minh" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="state" class="form-label">Quận/Huyện</label>
+                                    <input type="text" name="state" id="state" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phoneNumber" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                                <input type="tel" name="phoneNumber" id="phoneNumber" class="form-control" required pattern="[0-9]{10}" />
+                                <div class="invalid-feedback">
+                                    Vui lòng nhập số điện thoại hợp lệ (10 số).
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="paymentMethod" class="form-label">Phương thức thanh toán <span class="text-danger">*</span></label>
+                                <select name="paymentMethod" id="paymentMethod" class="form-select" required>
+                                    <option value="">-- Chọn phương thức thanh toán --</option>
+                                    <option value="cash">Thanh toán khi nhận hàng (COD)</option>
+                                    <option value="online_payment">Thanh toán qua VNPay</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Vui lòng chọn phương thức thanh toán.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="notes" class="form-label">Ghi chú</label>
+                                <textarea name="notes" id="notes" class="form-control" rows="2"></textarea>
+                            </div>
+
+                            <hr />
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="fas fa-check-circle"></i> Đặt hàng
+                                </button>
+                                <a href="@Url.Action("Cart", "Cart")" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left"></i> Quay lại giỏ hàng
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-center my-5">
+            <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+            <h4>Giỏ hàng của bạn đang trống</h4>
+            <p class="text-muted">Không thể thanh toán khi giỏ hàng trống.</p>
+            <a href="@Url.Action("Index", "Product")" class="btn btn-primary mt-3">Mua sắm ngay</a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Xác thực form khi submit
+        (function () {
+            'use strict';
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.querySelectorAll('.needs-validation');
+
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+        })();
+
+        // Auto-dismiss alerts after 5 seconds
+        $(document).ready(function () {
+            setTimeout(function () {
+                $('.alert').alert('close');
+            }, 5000);
+        });
+    </script>
+} 

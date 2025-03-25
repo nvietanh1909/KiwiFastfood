@@ -18,6 +18,12 @@ namespace KiwiFastfood
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "User", action = "Login", id = UrlParameter.Optional }
             );
+
+            routes.MapRoute(
+                name: "VNPayReturn",
+                url: "Payment/VNPayReturn",
+                defaults: new { controller = "Payment", action = "VNPayReturn" }
+            );
         }
     }
 }

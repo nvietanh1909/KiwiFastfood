@@ -42,13 +42,10 @@ namespace KiwiFastfood.Controllers
 
                 try
                 {
-                    // Lưu tin nhắn của người dùng vào lịch sử
                     SaveMessageToHistory("user", message);
 
-                    // Gửi tin nhắn và nhận phản hồi từ chatbot
                     string response = await _chatbotService.SendMessageAsync(message);
 
-                    // Lưu phản hồi vào lịch sử
                     SaveMessageToHistory("bot", response);
 
                     return Json(new { success = true, data = response });

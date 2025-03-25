@@ -11,21 +11,29 @@
         <div class="alert alert-danger text-center">@ViewBag.ErrorMessage</div>
     }
 
-    <div class="row">
-        @foreach (var product in ViewBag.Products)
-        {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="@product.hinhAnh" class="card-img-top" alt="@product.tenMon">
-                    <div class="card-body">
-                        <h5 class="card-title">@product.tenMon</h5>
-                        <p class="card-text text-danger font-weight-bold">@product.giaBan VNĐ</p>
-                        <p class="card-text">@product.noiDung</p>
-                    </div>
+<div class="row">
+    @foreach (var product in ViewBag.Products)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="@product.hinhAnh" class="card-img-top" alt="@product.tenMon">
+                <div class="card-body">
+                    <h5 class="card-title">@product.tenMon</h5>
+                    <p class="card-text text-danger font-weight-bold">@String.Format("{0:N0} VNĐ", product.giaBan)</p>
+                    <p class="card-text">@product.noiDung</p>
+                    <form action="@Url.Action("Add", "Cart")" method="post">
+                        <input type="hidden" name="productId" value="@product.id" />
+                        <input type="number" name="quantity" value="1" min="1" class="form-control" />
+                        <button type="submit" class="btn btn-success btn-sm">
+                            <i class="fas fa-shopping-cart"></i> Mua ngay
+                        </button>
+                    </form>
+
                 </div>
             </div>
-        }
-    </div>
+        </div>
+    }
+</div>
 
     <!-- Phân trang -->
     <nav class="mt-4 d-flex justify-content-center">

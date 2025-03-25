@@ -15,21 +15,48 @@
         <div class="alert alert-danger text-center">@ViewBag.ErrorMessage</div>
     }
 
+<div class="row">
     <div class="row">
         @foreach (var product in ViewBag.Products)
         {
             <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
-                    <img src="@product.hinhAnh" class="card-img-top" alt="@product.tenMon">
-                    <div class="card-body">
-                        <h5 class="card-title">@product.tenMon</h5>
-                        <p class="card-text text-danger font-weight-bold">@product.giaBan VNĐ</p>
-                        <p class="card-text">@product.noiDung</p>
+                    <a href="@Url.Action("Detail", "Product", new { id = product.id })" class="text-decoration-none">
+                        <img src="@product.hinhAnh" class="card-img-top" alt="@product.tenMon" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title text-dark">@product.tenMon</h5>
+                            <p class="card-text text-danger font-weight-bold">@String.Format("{0:N0} VNĐ", product.giaBan)</p>
+                            <p class="card-text text-dark">@product.noiDung</p>
+                            <p class="card-text">
+                                <small class="text-muted">Số lượng tồn: @product.soLuongTon</small>
+                            </p>
+                        </div>
+                    </a>
+                    <div class="card-footer bg-white border-top-0">
+                        @if (product.soLuongTon > 0)
+                        {
+                            <form action="@Url.Action("Add", "Cart")" method="post">
+                                <input type="hidden" name="productId" value="@product.id" />
+                                <div class="input-group">
+                                    <input type="number" name="quantity" value="1" min="1" max="@product.soLuongTon" class="form-control" style="width: 80px;" />
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-shopping-cart"></i> Mua ngay
+                                    </button>
+                                </div>
+                            </form>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning mb-0">
+                                <i class="fas fa-exclamation-triangle"></i> Hết hàng
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
         }
     </div>
+</div>
 
     <!-- Phân trang -->
     <nav class="mt-4 d-flex justify-content-center">
