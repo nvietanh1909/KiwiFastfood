@@ -42,25 +42,18 @@ namespace KiwiFastfood.Controllers
             return View();
         }
 
-        public async Task<ActionResult> Home(int page = 1, int limit = 10)
+        public async Task<ActionResult> Home(int page = 1, int limit = 8)
         {
             try
             {
-                if (_isLogin)
-                {
-                    string token = Session["UserToken"].ToString();
-                    _productService.SetToken(token);
+                var response = await _productService.GetRecommendProductAsync(new { page, limit });
 
-                    var response = await _productService.GetAllProductsAsync(new { page, limit });
-                    dynamic result = JsonConvert.DeserializeObject(response);
+                dynamic result = JsonConvert.DeserializeObject(response);
 
-                    ViewBag.Products = result.data.products;
-                    ViewBag.Pagination = result.data.pagination;
+                ViewBag.Products = result.data.products;
+                ViewBag.Pagination = result.data.pagination;
 
-                    return View();
-                }
-                return RedirectToAction("Login", "User");
-
+                return View();
             }
             catch (Exception ex)
             {

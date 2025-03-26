@@ -165,7 +165,7 @@ namespace KiwiFastfood.Controllers
                 }
 
                 TempData["SuccessMessage"] = "Đơn hàng đã được tạo thành công.";
-                return RedirectToAction("Order", "Order");
+                return RedirectToAction("Home", "Home");
             }
             catch (Exception ex)
             {

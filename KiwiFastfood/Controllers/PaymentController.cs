@@ -11,6 +11,8 @@ namespace KiwiFastfood.Controllers
     public class PaymentController : Controller
     {
         private readonly PaymentService _paymentService;
+        private bool _isLogin { get => Session["UserToken"] != null; }
+
 
         public PaymentController()
         {
@@ -37,6 +39,8 @@ namespace KiwiFastfood.Controllers
 
         public ActionResult Success()
         {
+            if (!_isLogin) return RedirectToAction("Login", "User");
+
             TempData["Message"] = "Thanh toán thành công!";
             return View();
         }

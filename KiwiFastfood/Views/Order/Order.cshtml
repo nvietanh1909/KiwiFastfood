@@ -51,7 +51,6 @@
                     @foreach (var order in ViewBag.Orders)
                     {
                         <tr>
-                            <td>@order._id</td>
                             <td>@(order.createdAt != null ? DateTime.Parse(order.createdAt.ToString()).ToString("dd/MM/yyyy HH:mm") : "N/A")</td>
                             <td>
                                 @(order.items != null ? order.items.Count : 0) món

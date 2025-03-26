@@ -22,33 +22,26 @@ namespace KiwiFastfood.Controllers
             _categoryService = new CategoryService();
         }
 
-        public async Task<ActionResult> Product(int page = 1, int limit = 10)
+        public async Task<ActionResult> Product(int page = 1, int limit = 8)
         {
             try
             {
-                if (_isLogin)
+                var response = await _productService.GetAllProductsAsync(new { page, limit });
+                dynamic result = JsonConvert.DeserializeObject(response);
+
+                if (result?.success != true || result?.data == null)
                 {
-                    string token = Session["UserToken"].ToString();
-                    _productService.SetToken(token);
-
-                    var response = await _productService.GetAllProductsAsync(new { page, limit });
-                    dynamic result = JsonConvert.DeserializeObject(response);
-
-                    if (result?.success != true || result?.data == null)
-                    {
-                        ViewBag.ErrorMessage = "Không thể tải danh sách sản phẩm: Dữ liệu không đúng định dạng.";
-                        ViewBag.Products = null;
-                        ViewBag.Pagination = null;
-                    }
-                    else
-                    {
-                        ViewBag.Products = result.data.products;
-                        ViewBag.Pagination = result.data.pagination;
-                    }
-
-                    return View();
+                    ViewBag.ErrorMessage = "Không thể tải danh sách sản phẩm: Dữ liệu không đúng định dạng.";
+                    ViewBag.Products = null;
+                    ViewBag.Pagination = null;
                 }
-                return RedirectToAction("Login", "User");
+                else
+                {
+                    ViewBag.Products = result.data.products;
+                    ViewBag.Pagination = result.data.pagination;
+                }
+
+                return View();
             }
             catch (Exception ex)
             {
@@ -59,8 +52,6 @@ namespace KiwiFastfood.Controllers
 
         public async Task<ActionResult> Detail(string id)
         {
-            if (!_isLogin) return RedirectToAction("Login", "User");
-
             if (string.IsNullOrEmpty(id))
             {
                 TempData["ErrorMessage"] = "ID sản phẩm không hợp lệ.";
@@ -69,9 +60,6 @@ namespace KiwiFastfood.Controllers
 
             try
             {
-                string token = Session["UserToken"].ToString();
-                _productService.SetToken(token);
-
                 var response = await _productService.GetProductByIdAsync(id);
                 dynamic result = JsonConvert.DeserializeObject(response);
 
