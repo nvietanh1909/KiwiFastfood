@@ -30,6 +30,20 @@ namespace KiwiFastfood.Services
             return await response.Content.ReadAsStringAsync();
         }
 
+        public async Task<string> GetRecommendProductAsync(dynamic queryParams = null)
+        {
+            var queryString = queryParams != null
+                ? "?" + string.Join("&", ((object)queryParams).GetType().GetProperties()
+                    .Select(p => $"{p.Name}={Uri.EscapeDataString(p.GetValue(queryParams)?.ToString() ?? "")}"))
+                : "";
+
+            var response = await _httpClient.GetAsync($"products/recommended{queryString}");
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsStringAsync();
+        }
+
+
         public async Task<string> CreateProductAsync(dynamic productData)
         {
             if (string.IsNullOrEmpty(_token))

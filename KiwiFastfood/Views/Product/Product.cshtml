@@ -3,50 +3,353 @@
     ViewBag.Title = "Danh sách sản phẩm";
 }
 
-<div class="container mt-4">
-    <h2 class="text-center mb-4">Danh sách sản phẩm</h2>
-
-    @if (ViewBag.ErrorMessage != null)
-    {
-        <div class="alert alert-danger text-center">@ViewBag.ErrorMessage</div>
+<style>
+    .product-grid {
+        padding: 20px 0;
+        background: #f8f9fa;
     }
 
-<div class="row">
-    @foreach (var product in ViewBag.Products)
-    {
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <img src="@product.hinhAnh" class="card-img-top" alt="@product.tenMon">
-                <div class="card-body">
-                    <h5 class="card-title">@product.tenMon</h5>
-                    <p class="card-text text-danger font-weight-bold">@String.Format("{0:N0} VNĐ", product.giaBan)</p>
-                    <p class="card-text">@product.noiDung</p>
-                    <form action="@Url.Action("Add", "Cart")" method="post">
-                        <input type="hidden" name="productId" value="@product.id" />
-                        <input type="number" name="quantity" value="1" min="1" class="form-control" />
-                        <button type="submit" class="btn btn-success btn-sm">
-                            <i class="fas fa-shopping-cart"></i> Mua ngay
-                        </button>
-                    </form>
+    .product-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-bottom: 30px;
+        border: none;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    }
 
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+    .product-image {
+        position: relative;
+        padding-top: 75%;
+        overflow: hidden;
+        background: #fff;
+    }
+
+        .product-image img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+    .product-card:hover .product-image img {
+        transform: scale(1.05);
+    }
+
+    .product-info {
+        padding: 20px 20px 10px 20px;
+    }
+
+    .product-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #333;
+        overflow: hidden;
+    }
+
+    .product-price {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #e4002b;
+    }
+
+    .product-description {
+        color: #666;
+        font-size: 0.9rem;
+        height: 40px;
+        overflow: hidden;
+    }
+
+    .add-to-cart {
+        background: #e4002b;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+    }
+
+        .add-to-cart:hover {
+            background: #c1001f;
+            transform: translateY(-2px);
+        }
+
+    .quantity-input {
+        width: 80px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 8px;
+        margin-right: 10px;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 40px;
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: #e4002b;
+        }
+
+    .out-of-stock {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 25px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .pagination {
+        margin-top: 40px;
+    }
+
+    .page-link {
+        color: #e4002b;
+        border-color: #e4002b;
+    }
+
+        .page-link:hover {
+            background: #e4002b;
+            color: white;
+            border-color: #e4002b;
+        }
+
+    .page-item.disabled .page-link {
+        color: #6c757d;
+        border-color: #dee2e6;
+    }
+
+    /* Slideshow styles */
+    .slideshow-container {
+        position: relative;
+        width: 100%;
+        height: 500px;
+        overflow: hidden;
+        margin-bottom: 40px;
+    }
+
+    .slide {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .slide-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: white;
+        z-index: 2;
+        width: 80%;
+        max-width: 800px;
+    }
+
+        .slide-content h2 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .slide-content p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+    .slide-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.3);
+    }
+
+    .slide-btn {
+        display: inline-block;
+        padding: 12px 30px;
+        background: #e4002b;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+        .slide-btn:hover {
+            background: #c1001f;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+    /* Navigation buttons */
+    .slide-nav {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 3;
+    }
+
+    .slide-nav-btn {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.5);
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+        .slide-nav-btn.active {
+            background: #fff;
+            transform: scale(1.2);
+        }
+
+    /* Arrow buttons */
+    .slide-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50px;
+        height: 50px;
+        background: rgba(0,0,0,0.5);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        z-index: 3;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .slide-arrow:hover {
+            background: rgba(0,0,0,0.8);
+        }
+
+        .slide-arrow.prev {
+            left: 20px;
+        }
+
+        .slide-arrow.next {
+            right: 20px;
+        }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+
+<div class="product-grid">
+    <div class="container">
+        <h2 class="section-title">DANH SÁCH SẢN PHẨM </h2>
+
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert alert-danger text-center">@ViewBag.ErrorMessage</div>
+        }
+
+        <div class="row">
+            @foreach (var product in ViewBag.Products)
+            {
+                <div class="col-md-4 col-lg-3">
+                    <div class="product-card">
+                        <a href="@Url.Action("Detail", "Product", new { id = product.id })" class="text-decoration-none">
+                            <div class="product-image">
+                                <img src="@product.anhDD" alt="@product.tenMon">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">@product.tenMon</h3>
+                                <div class="product-price">@String.Format("{0:N0}đ", product.giaBan)</div>
+                                <div class="product-description">@product.noiDung</div>
+                            </div>
+                        </a>
+                        <div class="product-info pt-0">
+                            @if (product.soLuongTon > 0)
+                            {
+                                <form action="@Url.Action("Add", "Cart")" method="post" class="d-flex align-items-center">
+                                    <input type="hidden" name="productId" value="@product.id" />
+                                    <input type="number" name="quantity" value="1" min="1" max="@product.soLuongTon"
+                                           class="quantity-input" />
+                                    <button type="submit" class="add-to-cart">
+                                        Thêm
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <div class="out-of-stock">
+                                    <i class="fas fa-exclamation-circle"></i> Hết hàng
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
-            </div>
+            }
         </div>
-    }
-</div>
 
-    <!-- Phân trang -->
-    <nav class="mt-4 d-flex justify-content-center">
-        <ul class="pagination">
-            <li class="page-item @(ViewBag.Pagination.page <= 1 ? "disabled" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.Pagination.page - 1 })">Trước</a>
-            </li>
-            <li class="page-item disabled">
-                <span class="page-link">Trang @ViewBag.Pagination.page / @ViewBag.Pagination.pages</span>
-            </li>
-            <li class="page-item @(ViewBag.Pagination.page >= ViewBag.Pagination.pages ? "disabled" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.Pagination.page + 1 })">Sau</a>
-            </li>
-        </ul>
-    </nav>
+        <!-- Phân trang -->
+        <nav class="d-flex justify-content-center">
+            <ul class="pagination">
+                <li class="page-item @(ViewBag.Pagination.page <= 1 ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Product", new { page = ViewBag.Pagination.page - 1 })">Trước</a>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">Trang @ViewBag.Pagination.page / @ViewBag.Pagination.pages</span>
+                </li>
+                <li class="page-item @(ViewBag.Pagination.page >= ViewBag.Pagination.pages ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Product", new { page = ViewBag.Pagination.page + 1 })">Sau</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 </div>

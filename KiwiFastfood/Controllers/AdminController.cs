@@ -204,19 +204,34 @@ namespace KiwiFastfood.Controllers
             {
                 string token = Session["UserToken"].ToString();
                 _productService.SetToken(token);
+                _categoryService.SetToken(token);
+                var responseCategories = await _categoryService.GetAllCategoriesAsync();
+                dynamic resultCategories = JsonConvert.DeserializeObject(responseCategories);
+                var maLoai = form["maLoai"];
+                string id = null;
+
+                foreach (var item in resultCategories.data)
+                {
+                    if (item.tenLoai == maLoai)
+                    {
+                        id = item._id;
+                        break;
+                    }
+                }
 
                 var productData = new
                 {
                     tenMon = form["tenMon"],
                     giaBan = decimal.Parse(form["giaBan"]),
-                    maLoai = form["maLoai"],
+                    maLoai = id,
                     noiDung = form["noiDung"],
-                    hinhAnh = form["hinhAnh"],
+                    hinhAnh = form["anhDD"],
                     soLuongTon = int.Parse(form["soLuongTon"])
                 };
 
                 var response = await _productService.CreateProductAsync(productData);
                 dynamic result = JsonConvert.DeserializeObject(response);
+
 
                 if (result?.success != true)
                 {

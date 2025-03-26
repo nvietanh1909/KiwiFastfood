@@ -10,124 +10,183 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #4CAF50;
-            --secondary-color: #45a049;
-            --background-color: #f4f4f4;
+            --primary-color: #e4002b;
+            --secondary-color: #cc0027;
+            --background-color: #f8f9fa;
             --text-color: #333;
-            --error-color: #ff4444;
+            --error-color: #dc3545;
+            --success-color: #28a745;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
             padding: 20px;
         }
 
         .login-container {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
             overflow: hidden;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .login-container:hover {
+            transform: translateY(-5px);
         }
 
         .login-header {
             background: var(--primary-color);
-            color: white;
-            padding: 30px 20px;
+            padding: 2.5rem 2rem;
             text-align: center;
             position: relative;
+            overflow: hidden;
+        }
+
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            transform: skewY(-4deg);
         }
 
         .login-header h2 {
-            margin: 0;
-            font-size: 28px;
+            color: white;
+            font-size: 1.75rem;
             font-weight: 600;
+            margin: 0;
+            position: relative;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .login-header p {
-            margin: 10px 0 0;
-            font-size: 16px;
-            opacity: 0.9;
+            color: rgba(255,255,255,0.9);
+            margin-top: 0.5rem;
+            font-size: 1rem;
+            position: relative;
         }
 
         .login-form {
-            padding: 30px;
+            padding: 2rem;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
             position: relative;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
-            color: #555;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
             font-weight: 500;
-            font-size: 14px;
+            font-size: 0.9rem;
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 0.75rem 1rem;
+            padding-left: 2.5rem;
             border: 2px solid #e1e1e1;
-            border-radius: 10px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 1rem;
             transition: all 0.3s ease;
-            background: #f8f9fa;
-            box-sizing: border-box;
+            background: var(--background-color);
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 1rem;
+            top: 2.4rem;
+            color: #adb5bd;
+            transition: color 0.3s ease;
         }
 
         .form-group input:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
             background: white;
+            box-shadow: 0 0 0 4px rgba(228, 0, 43, 0.1);
+        }
+
+        .form-group input:focus + i {
+            color: var(--primary-color);
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 1.2rem;
+            height: 1.2rem;
+            accent-color: var(--primary-color);
+        }
+
+        .remember-me label {
+            color: #666;
+            font-size: 0.9rem;
+            cursor: pointer;
+            user-select: none;
         }
 
         .error-message {
             background: #fff5f5;
             color: var(--error-color);
-            padding: 12px 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 14px;
-            border: 1px solid #ffebeb;
-        }
-
-        .error-message i {
-            margin-right: 8px;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid #ffe3e3;
         }
 
         button {
             width: 100%;
-            padding: 12px;
+            padding: 1rem;
             background: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 0.5rem;
         }
 
         button:hover {
             background: var(--secondary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(228, 0, 43, 0.2);
         }
 
         button:active {
@@ -136,60 +195,29 @@
 
         .register-link {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 1.5rem;
             color: #666;
-            font-size: 14px;
+            font-size: 0.9rem;
         }
 
         .register-link a {
             color: var(--primary-color);
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 500;
             transition: color 0.3s ease;
         }
 
         .register-link a:hover {
             color: var(--secondary-color);
+            text-decoration: underline;
         }
-
-        .back-to-home {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            color: white;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 8px 16px;
-            border-radius: 20px;
-            backdrop-filter: blur(5px);
-        }
-
-        .back-to-home:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateX(-5px);
-        }
-
-        .back-to-home i {
-            font-size: 16px;
-        }
-    }
     </style>
 </head>
 <body>
-    <a href="@Url.Action("Home", "Home")" class="back-to-home">
-        <i class="fas fa-arrow-left"></i>
-        Về trang chủ
-    </a>
-
     <div class="login-container">
         <div class="login-header">
-            <h2>Đăng nhập</h2>
-            <p>Chào mừng bạn đến với Kiwi Fastfood</p>
+            <h2>Kiwi</h2>
+            <p>Chào mừng bạn quay trở lại!</p>
         </div>
 
         <div class="login-form">
@@ -205,11 +233,18 @@
                 <div class="form-group">
                     <label for="taiKhoan">Tài khoản</label>
                     <input type="text" name="taiKhoan" id="taiKhoan" required placeholder="Nhập email của bạn" />
+                    <i class="fas fa-user"></i>
                 </div>
 
                 <div class="form-group">
                     <label for="matKhau">Mật khẩu</label>
                     <input type="password" name="matKhau" id="matKhau" required placeholder="Nhập mật khẩu của bạn" />
+                    <i class="fas fa-lock"></i>
+                </div>
+
+                <div class="remember-me">
+                    <input type="checkbox" name="rememberMe" id="rememberMe" />
+                    <label for="rememberMe">Ghi nhớ đăng nhập</label>
                 </div>
 
                 <button type="submit">

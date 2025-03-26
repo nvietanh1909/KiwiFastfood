@@ -1,75 +1,584 @@
-﻿@model dynamic
-@{
-    ViewBag.Title = "Trang chủ";
+﻿@{
+    ViewBag.Title = "Trang chủ - Kiwi Fastfood";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-4">
-    <h2>Chào mừng đến với Kiwi Fastfood</h2>
-</div>
-
-<div class="container mt-4">
-    <h2 class="text-center mb-4">Danh sách sản phẩm</h2>
-
-    @if (ViewBag.ErrorMessage != null)
-    {
-        <div class="alert alert-danger text-center">@ViewBag.ErrorMessage</div>
+<style>
+    .product-grid {
+        padding: 20px 0;
+        background: #f8f9fa;
     }
 
-<div class="row">
-    <div class="row">
-        @foreach (var product in ViewBag.Products)
-        {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <a href="@Url.Action("Detail", "Product", new { id = product.id })" class="text-decoration-none">
-                        <img src="@product.hinhAnh" class="card-img-top" alt="@product.tenMon" style="height: 200px; object-fit: cover;">
-                        <div class="card-body">
-                            <h5 class="card-title text-dark">@product.tenMon</h5>
-                            <p class="card-text text-danger font-weight-bold">@String.Format("{0:N0} VNĐ", product.giaBan)</p>
-                            <p class="card-text text-dark">@product.noiDung</p>
-                            <p class="card-text">
-                                <small class="text-muted">Số lượng tồn: @product.soLuongTon</small>
-                            </p>
-                        </div>
-                    </a>
-                    <div class="card-footer bg-white border-top-0">
-                        @if (product.soLuongTon > 0)
-                        {
-                            <form action="@Url.Action("Add", "Cart")" method="post">
-                                <input type="hidden" name="productId" value="@product.id" />
-                                <div class="input-group">
-                                    <input type="number" name="quantity" value="1" min="1" max="@product.soLuongTon" class="form-control" style="width: 80px;" />
-                                    <button type="submit" class="btn btn-success">
-                                        <i class="fas fa-shopping-cart"></i> Mua ngay
-                                    </button>
-                                </div>
-                            </form>
-                        }
-                        else
-                        {
-                            <div class="alert alert-warning mb-0">
-                                <i class="fas fa-exclamation-triangle"></i> Hết hàng
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
+    .product-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-bottom: 30px;
+        border: none;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    }
+
+    .product-image {
+        position: relative;
+        padding-top: 75%;
+        overflow: hidden;
+        background: #fff;
+    }
+
+    .product-image img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .product-card:hover .product-image img {
+        transform: scale(1.05);
+    }
+
+    .product-info {
+        padding: 20px 20px 10px 20px;
+    }
+
+    .product-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #333;
+        overflow: hidden;
+    }
+
+    .product-price {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #e4002b;
+    }
+
+    .product-description {
+        color: #666;
+        font-size: 0.9rem;
+        height: 40px;
+        overflow: hidden;
+    }
+
+    .add-to-cart {
+        background: #e4002b;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+    }
+
+    .add-to-cart:hover {
+        background: #c1001f;
+        transform: translateY(-2px);
+    }
+
+    .quantity-input {
+        width: 80px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 8px;
+        margin-right: 10px;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 40px;
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+    .section-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: #e4002b;
+    }
+
+    .out-of-stock {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 25px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .pagination {
+        margin-top: 40px;
+    }
+
+    .page-link {
+        color: #e4002b;
+        border-color: #e4002b;
+    }
+
+    .page-link:hover {
+        background: #e4002b;
+        color: white;
+        border-color: #e4002b;
+    }
+
+    .page-item.disabled .page-link {
+        color: #6c757d;
+        border-color: #dee2e6;
+    }
+
+    /* Slideshow styles */
+    .slideshow-container {
+        position: relative;
+        width: 100%;
+        height: 500px;
+        overflow: hidden;
+        margin-bottom: 40px;
+    }
+
+    .slide {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .slide.active {
+        opacity: 1;
+    }
+
+    .slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .slide-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: white;
+        z-index: 2;
+        width: 80%;
+        max-width: 800px;
+    }
+
+    .slide-content h2 {
+        font-size: 48px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .slide-content p {
+        font-size: 18px;
+        margin-bottom: 30px;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+
+    .slide-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.3);
+    }
+
+    .slide-btn {
+        display: inline-block;
+        padding: 12px 30px;
+        background: #e4002b;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .slide-btn:hover {
+        background: #c1001f;
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    /* Navigation buttons */
+    .slide-nav {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 3;
+    }
+
+    .slide-nav-btn {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.5);
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .slide-nav-btn.active {
+        background: #fff;
+        transform: scale(1.2);
+    }
+
+    /* Arrow buttons */
+    .slide-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50px;
+        height: 50px;
+        background: rgba(0,0,0,0.5);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        z-index: 3;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .slide-arrow:hover {
+        background: rgba(0,0,0,0.8);
+    }
+
+    .slide-arrow.prev {
+        left: 20px;
+    }
+
+    .slide-arrow.next {
+        right: 20px;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .swiper {
+        width: 100%;
+        padding: 20px 40px;
+        margin-bottom: 30px;
+        position: relative;
+        padding-bottom: 61px;
+    }
+
+    .swiper-slide {
+        width: auto;
+        height: auto;
+    }
+
+    .swiper-button-next,
+    .swiper-button-prev {
+        color: #e4002b;
+    }
+
+        .swiper-button-next:after,
+        .swiper-button-prev:after {
+            font-size: 24px;
+            color: #fff;
+            font-weight: 800;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
         }
+
+    .swiper-pagination {
+        position: absolute;
+        bottom: -16px !important;
+        left: 0;
+        right: 0;
+        padding: 10px 0;
+    }
+
+    .swiper-pagination-bullet {
+        width: 8px;
+        height: 8px;
+        margin: 0 5px;
+        background: #ccc;
+        opacity: 0.7;
+    }
+
+    .swiper-pagination-bullet-active {
+        background: #e4002b;
+        opacity: 1;
+    }
+
+    .product-card {
+        margin: 0 10px;
+    }
+</style>
+
+<!-- Slideshow Container -->
+<div class="slideshow-container">
+    <div class="slide active">
+        <div class="slide-overlay"></div>
+        <img src="~/Assets/Images/1.jpg" alt="Slide 1">
+        <div class="slide-content">
+            <h2>Chào mừng đến với Kiwi Fastfood</h2>
+            <p>Khám phá thế giới ẩm thực đa dạng và hấp dẫn của chúng tôi</p>
+            <a href="@Url.Action("Product", "Product")" class="slide-btn">Xem thực đơn</a>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-overlay"></div>
+        <img src="~/Assets/Images/2.jpg" alt="Slide 2">
+        <div class="slide-content">
+            <h2>Ưu đãi đặc biệt</h2>
+            <p>Giảm giá lên đến 30% cho đơn hàng đầu tiên</p>
+            <a href="@Url.Action("Product", "Product")" class="slide-btn">Đặt hàng ngay</a>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-overlay"></div>
+        <img src="~/Assets/Images/3.jpg" alt="Slide 3">
+        <div class="slide-content">
+            <h2>Giao hàng nhanh chóng</h2>
+            <p>Miễn phí giao hàng trong bán kính 5km</p>
+            <a href="@Url.Action("Product", "Product")" class="slide-btn">Đặt ngay</a>
+        </div>
+    </div>
+
+    <!-- Navigation Arrows -->
+    <button class="slide-arrow prev" onclick="changeSlide(-1)">
+        <i class="fas fa-chevron-left"></i>
+    </button>
+    <button class="slide-arrow next" onclick="changeSlide(1)">
+        <i class="fas fa-chevron-right"></i>
+    </button>
+
+    <!-- Navigation Dots -->
+    <div class="slide-nav">
+        <button class="slide-nav-btn active" onclick="goToSlide(0)"></button>
+        <button class="slide-nav-btn" onclick="goToSlide(1)"></button>
+        <button class="slide-nav-btn" onclick="goToSlide(2)"></button>
     </div>
 </div>
 
-    <!-- Phân trang -->
-    <nav class="mt-4 d-flex justify-content-center">
-        <ul class="pagination">
-            <li class="page-item @(ViewBag.Pagination.page <= 1 ? "disabled" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.Pagination.page - 1 })">Trước</a>
-            </li>
-            <li class="page-item disabled">
-                <span class="page-link">Trang @ViewBag.Pagination.page / @ViewBag.Pagination.pages</span>
-            </li>
-            <li class="page-item @(ViewBag.Pagination.page >= ViewBag.Pagination.pages ? "disabled" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.Pagination.page + 1 })">Sau</a>
-            </li>
-        </ul>
-    </nav>
+<div class="product-grid">
+    <div class="container">
+        <h2 class="section-title">BEST SELLER TUẦN!</h2>
+
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert alert-danger text-center">@ViewBag.ErrorMessage</div>
+        }
+
+        <!-- Slider main container -->
+        <div class="swiper product-swiper">
+            <!-- Additional required wrapper -->
+            <div class="swiper-wrapper">
+                @foreach (var product in ViewBag.Products)
+                {
+                    <div class="swiper-slide">
+                        <div class="product-card">
+                            <a href="@Url.Action("Detail", "Product", new { id = product.id })" class="text-decoration-none">
+                                <div class="product-image">
+                                    <img src="@product.anhDD" alt="@product.tenMon">
+                                </div>
+                                <div class="product-info">
+                                    <h3 class="product-title">@product.tenMon</h3>
+                                    <div class="product-price">@String.Format("{0:N0}đ", product.giaBan)</div>
+                                    <div class="product-description">@product.noiDung</div>
+                                </div>
+                            </a>
+                            <div class="product-info pt-0">
+                                @if (product.soLuongTon > 0)
+                                {
+                                    <form action="@Url.Action("Add", "Cart")" method="post" class="d-flex align-items-center">
+                                        <input type="hidden" name="productId" value="@product.id" />
+                                        <input type="number" name="quantity" value="1" min="1" max="@product.soLuongTon"
+                                               class="quantity-input" />
+                                        <button type="submit" class="add-to-cart">
+                                            Thêm
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <div class="out-of-stock">
+                                        <i class="fas fa-exclamation-circle"></i> Hết hàng
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <!-- Navigation buttons -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <!-- Pagination -->
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <!-- Add Swiper JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const navBtns = document.querySelectorAll('.slide-nav-btn');
+        const totalSlides = slides.length;
+        let slideInterval;
+
+        // Start autoplay
+        startSlideshow();
+
+        function startSlideshow() {
+            slideInterval = setInterval(() => {
+                changeSlide(1);
+            }, 5000); // Change slide every 5 seconds
+        }
+
+        function stopSlideshow() {
+            clearInterval(slideInterval);
+        }
+
+        function changeSlide(direction) {
+            // Stop current autoplay
+            stopSlideshow();
+
+            // Remove current active classes
+            slides[currentSlide].classList.remove('active');
+            navBtns[currentSlide].classList.remove('active');
+
+            // Calculate new slide index
+            currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+
+            // Add new active classes
+            slides[currentSlide].classList.add('active');
+            navBtns[currentSlide].classList.add('active');
+
+            // Restart autoplay
+            startSlideshow();
+        }
+
+        function goToSlide(slideIndex) {
+            if (slideIndex === currentSlide) return;
+
+            // Stop current autoplay
+            stopSlideshow();
+
+            // Remove current active classes
+            slides[currentSlide].classList.remove('active');
+            navBtns[currentSlide].classList.remove('active');
+
+            // Set new slide
+            currentSlide = slideIndex;
+
+            // Add new active classes
+            slides[currentSlide].classList.add('active');
+            navBtns[currentSlide].classList.add('active');
+
+            // Restart autoplay
+            startSlideshow();
+        }
+
+        // Pause autoplay when hovering over slideshow
+        document.querySelector('.slideshow-container').addEventListener('mouseenter', stopSlideshow);
+        document.querySelector('.slideshow-container').addEventListener('mouseleave', startSlideshow);
+
+        // Swipe support for touch devices
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.querySelector('.slideshow-container').addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.querySelector('.slideshow-container').addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const difference = touchStartX - touchEndX;
+
+            if (Math.abs(difference) > swipeThreshold) {
+                if (difference > 0) {
+                    // Swiped left
+                    changeSlide(1);
+                } else {
+                    // Swiped right
+                    changeSlide(-1);
+                }
+            }
+        }
+
+        // Initialize Swiper
+        const swiper = new Swiper('.product-swiper', {
+            slidesPerView: 'auto',
+            spaceBetween: 20,
+            loop: true,
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            breakpoints: {
+                // when window width is >= 320px
+                320: {
+                    slidesPerView: 1,
+                },
+                // when window width is >= 576px
+                576: {
+                    slidesPerView: 2,
+                },
+                // when window width is >= 768px
+                768: {
+                    slidesPerView: 3,
+                },
+                // when window width is >= 992px
+                992: {
+                    slidesPerView: 4,
+                }
+            }
+        });
+    </script>
+}
