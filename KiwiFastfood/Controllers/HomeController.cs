@@ -37,10 +37,11 @@ namespace KiwiFastfood.Controllers
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "Your application description page.";
 
             return View();
         }
+
 
         public async Task<ActionResult> Home(int page = 1, int limit = 8)
         {

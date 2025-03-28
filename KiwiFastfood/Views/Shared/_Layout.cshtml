@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Kiwi Fastfood</title>
     <link rel="icon" type="image/x-icon" href="@Url.Content("~/favicon.ico")" />
-    
+
     <!-- SEO Meta Tags -->
     <meta name="description" content="Kiwi Fastfood - Đặt đồ ăn nhanh online với nhiều món ăn ngon, giá cả hợp lý. Giao hàng nhanh chóng, an toàn và chất lượng." />
     <meta name="keywords" content="đồ ăn nhanh, fastfood, giao hàng, đặt đồ ăn online, kiwi fastfood" />
     <meta name="author" content="Kiwi Fastfood" />
     <meta name="robots" content="index, follow" />
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="@Request.Url.AbsoluteUri" />
@@ -30,12 +30,15 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="@Request.Url.AbsoluteUri" />
 
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" 
           crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    @Scripts.Render("~/bundles/modernizr")
     <style>
         /* Reset default styles */
         * {
@@ -126,10 +129,10 @@
             transition: all 0.3s ease;
         }
 
-        .cart-wrapper:hover {
-            background: #c1001f;
-            transform: translateY(-2px);
-        }
+            .cart-wrapper:hover {
+                background: #c1001f;
+                transform: translateY(-2px);
+            }
 
         .cart-icon {
             font-size: 18px;
@@ -203,11 +206,9 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            z-index: 1000;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            z-index: 9999;
         }
 
-        /* Chat Toggle Button Styles */
         .chat-toggle-round {
             width: 60px;
             height: 60px;
@@ -223,32 +224,19 @@
             color: white;
             font-size: 24px;
             padding: 0;
+            z-index: 1000;
         }
 
-        .chat-toggle-round:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(228, 0, 43, 0.4);
-        }
-
-        /* Remove old chat-toggle styles */
-        .chat-toggle,
-        .chat-header-mini,
-        .chat-logo-mini,
-        .chat-title-mini {
-            display: none;
-        }
-
-        /* Chat Container Styles */
         .chat-container {
-            display: none;
             position: absolute;
-            bottom: calc(100% + 20px);
+            bottom: 80px;
             right: 0;
             width: 350px;
             background: white;
             border-radius: 10px;
             box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
+            display: none;
+            z-index: 999;
         }
 
         .chat-header {
@@ -297,9 +285,9 @@
             transition: opacity 0.3s;
         }
 
-        .close-btn:hover {
-            opacity: 1;
-        }
+            .close-btn:hover {
+                opacity: 1;
+            }
 
         #chatbox {
             height: 350px;
@@ -317,19 +305,19 @@
             gap: 10px;
         }
 
-        .chat-input input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            outline: none;
-            font-size: 14px;
-        }
+            .chat-input input {
+                flex: 1;
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                border-radius: 20px;
+                outline: none;
+                font-size: 14px;
+            }
 
-        .chat-input input:focus {
-            border-color: #e4002b;
-            box-shadow: 0 0 0 2px rgba(228, 0, 43, 0.1);
-        }
+                .chat-input input:focus {
+                    border-color: #e4002b;
+                    box-shadow: 0 0 0 2px rgba(228, 0, 43, 0.1);
+                }
 
         .send-btn {
             background: #e4002b;
@@ -345,10 +333,10 @@
             transition: all 0.3s ease;
         }
 
-        .send-btn:hover {
-            background: #c1001f;
-            transform: scale(1.1);
-        }
+            .send-btn:hover {
+                background: #c1001f;
+                transform: scale(1.1);
+            }
 
         .message {
             margin-bottom: 15px;
@@ -377,7 +365,6 @@
             display: flex;
             flex-direction: column;
         }
-
     </style>
 </head>
 <body>
@@ -398,9 +385,17 @@
             <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item" style="margin-bottom: 0">
-                        @Html.ActionLink("Món ăn", "Product", "Product", new { area = "" }, new { @class = "nav-link" })
+                        @Html.ActionLink("Về chúng tôi", "About", "Home", new { area = "" }, new { @class = "nav-link" })
+                    </li>
+                    <li class="nav-item" style="margin-bottom: 0">
+                        @Html.ActionLink("Danh sách món ăn", "Product", "Product", new { area = "" }, new { @class = "nav-link" })
+                    </li>
+                    <li class="nav-item" style="margin-bottom: 0">
+                        @Html.ActionLink("Liên hệ", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })
                     </li>
                 </ul>
+
+
 
                 <ul class="navbar-nav ms-auto">
                     @if (Session["UserToken"] != null)
@@ -487,12 +482,22 @@
         </div>
     </footer>
 
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+            crossorigin="anonymous"></script>
+
+    @RenderSection("scripts", required: false)
+
     <!-- Chat Widget -->
     @if (Session["UserToken"] != null)
     {
         <div class="chat-widget">
             <!-- Chat Toggle Button -->
-            <button class="chat-toggle-round" onclick="toggleChat()">
+            <button type="button" class="chat-toggle-round">
                 <i class="fas fa-comments"></i>
             </button>
 
@@ -529,19 +534,52 @@
                 </div>
             </div>
         </div>
-
     }
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
 
     <script>
+        $(document).ready(function() {
+            // Chat toggle functionality
+            $(".chat-toggle-round").on("click", function(e) {
+                e.preventDefault();
+                toggleChat();
+            });
+
+            // Handle message input
+            $("#messageInput").on("keypress", function(e) {
+                if (e.which == 13) {
+                    sendMessage();
+                    return false;
+                }
+            });
+
+            // Close chat when clicking outside
+            $(document).on("click", function(e) {
+                if (!$(e.target).closest(".chat-widget").length && 
+                    !$(e.target).hasClass("chat-toggle-round") && 
+                    $("#chatContainer").is(":visible")) {
+                    $("#chatContainer").slideUp(300);
+                }
+            });
+
+            // Stop propagation on chat container clicks
+            $(".chat-container").on("click", function(e) {
+                e.stopPropagation();
+            });
+        });
+
         function toggleChat() {
-            $("#chatContainer").slideToggle(300);
-            if ($("#chatContainer").is(":visible")) {
+            var chatContainer = $("#chatContainer");
+            chatContainer.slideToggle(300);
+            
+            if (chatContainer.is(":visible")) {
                 $("#messageInput").focus();
                 scrollToBottom();
             }
+        }
+
+        function scrollToBottom() {
+            var chatbox = $("#chatbox");
+            chatbox.scrollTop(chatbox[0].scrollHeight);
         }
 
         function sendMessage() {
@@ -554,22 +592,22 @@
             $(".send-btn").prop('disabled', true);
 
             $("#messages").append(`
-                    <div class="message user-message">
-                        <div class="message-content">
-                            ${escapeHtml(message)}
-                        </div>
+                <div class="message user-message">
+                    <div class="message-content">
+                        ${escapeHtml(message)}
                     </div>
-                `);
+                </div>
+            `);
             $("#messageInput").val("");
             scrollToBottom();
 
             $("#messages").append(`
-                    <div id="typing-indicator" class="message">
-                        <div class="message-content">
-                            <i>Đang nhập...</i>
-                        </div>
+                <div id="typing-indicator" class="message">
+                    <div class="message-content">
+                        <i>Đang nhập...</i>
                     </div>
-                `);
+                </div>
+            `);
             scrollToBottom();
 
             $.post("/Chatbot/SendMessage", { message: message }, function (response) {
@@ -577,20 +615,20 @@
 
                 if (response.success) {
                     $("#messages").append(`
-                            <div class="message bot-message">
-                                <div class="message-content">
-                                    ${escapeHtml(response.data)}
-                                </div>
+                        <div class="message bot-message">
+                            <div class="message-content">
+                                ${escapeHtml(response.data)}
                             </div>
-                        `);
+                        </div>
+                    `);
                 } else {
                     $("#messages").append(`
-                            <div class="message bot-message">
-                                <div class="message-content error">
-                                    Xin lỗi, có lỗi xảy ra. Vui lòng thử lại sau.
-                                </div>
+                        <div class="message bot-message">
+                            <div class="message-content error">
+                                Xin lỗi, có lỗi xảy ra. Vui lòng thử lại sau.
                             </div>
-                        `);
+                        </div>
+                    `);
                 }
 
                 $("#messageInput").prop('disabled', false);
@@ -600,22 +638,18 @@
             }).fail(function () {
                 $("#typing-indicator").remove();
                 $("#messages").append(`
-                        <div class="message bot-message">
-                            <div class="message-content error">
-                                Xin lỗi, có lỗi kết nối. Vui lòng thử lại sau.
-                            </div>
+                    <div class="message bot-message">
+                        <div class="message-content error">
+                            Xin lỗi, có lỗi kết nối. Vui lòng thử lại sau.
                         </div>
-                    `);
+                    </div>
+                `);
 
                 $("#messageInput").prop('disabled', false);
                 $(".send-btn").prop('disabled', false);
                 $("#messageInput").focus();
                 scrollToBottom();
             });
-        }
-
-        function scrollToBottom() {
-            $("#chatbox").animate({ scrollTop: $("#chatbox")[0].scrollHeight }, 300);
         }
 
         function escapeHtml(text) {
@@ -628,15 +662,6 @@
             };
             return text.replace(/[&<>"']/g, function (m) { return map[m]; });
         }
-
-        $(document).ready(function () {
-            $("#messageInput").keypress(function (e) {
-                if (e.which == 13) {
-                    sendMessage();
-                    return false;
-                }
-            });
-        });
     </script>
 </body>
 </html>
