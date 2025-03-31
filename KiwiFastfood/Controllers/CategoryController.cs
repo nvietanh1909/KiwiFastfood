@@ -63,7 +63,7 @@ namespace KiwiFastfood.Controllers
 
                     if (result.success == true && result.data != null)
                     {
-                        ViewBag.Category = result.data.ToObject<List<dynamic>>();
+                        ViewBag.Category = result.data;
                         ViewBag.Id = id;
                         return View();
                     }

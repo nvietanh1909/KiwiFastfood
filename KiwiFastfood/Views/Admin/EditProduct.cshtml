@@ -1,0 +1,53 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "EditProduct";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2 class="text-center">Chỉnh Sửa Thông Tin Sản Phẩm</h2>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.ErrorMessage
+    </div>
+}
+
+<form method="post" action="@Url.Action("EditProduct", "Admin", new { id = ViewBag.Id })">
+    <div class="form-group">
+        <label for="tenMon">Tên món:</label>
+        <input type="text" class="form-control" id="tenMon" name="tenMon" value="@ViewBag.Product.tenMon">
+    </div>
+
+    <div class="form-group">
+        <label for="giaBan">Giá bán:</label>
+        <input type="text" class="form-control" id="giaBan" name="giaBan" value="@ViewBag.Product.giaBan">
+    </div>
+
+    <div class="form-group">
+        <label for="noiDung">Mô tả sản phẩm:</label>
+        <input type="text" class="form-control" id="noiDung" name="noiDung" value="@ViewBag.Product.noiDung">
+    </div>
+
+    <div class="form-group">
+        <label for="anhDD">Ảnh sản phẩm:</label>
+        <input type="text" class="form-control" id="anhDD" name="anhDD" value="@ViewBag.Product.anhDD">
+    </div>
+
+    <div class="form-group">
+        <label for="soLuongTon">Số lượng tồn:</label>
+        <input type="number" class="form-control" id="soLuongTon" name="soLuongTon" value="@ViewBag.Product.soLuongTon">
+    </div>
+
+    <div class="form-group">
+        <label for="soLuongBan">Số lượng bán:</label>
+        <input type="number" class="form-control" id="soLuongBan" name="soLuongBan" value="@ViewBag.Product.soLuongBan">
+    </div>
+
+    <div class="form-group mt-2">
+        <button type="submit" class="btn btn-primary">Cập nhật</button>
+        <a href="@Url.Action("Product", "Admin")" class="btn btn-secondary">Quay lại</a>
+    </div>
+</form>
+

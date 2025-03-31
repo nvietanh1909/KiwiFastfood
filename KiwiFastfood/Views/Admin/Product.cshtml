@@ -1,0 +1,77 @@
+﻿@model dynamic
+@{
+    ViewBag.Title = "Product";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    int currentPage = Model?.data?.currentPage ?? 1;
+    int totalPages = Model?.data?.totalPages ?? 1;
+}
+
+<h2 class="text-center">Danh Sách Sản Phẩm</h2>
+
+<a href="@Url.Action("CreateProduct", "Admin")" style="margin-bottom: 10px;" class="btn btn-sm btn-warning">Thêm mới</a>
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>Tên sản phẩm</th>
+            <th>Giá Bán</th>
+            <th>Nội dung</th>
+            <th>Ảnh Sản Phẩm</th>
+            <th>Số lượng tồn</th>
+            <th>Số lượng bán</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model?.data?.products != null)
+        {
+            foreach (var product in Model.data.products)
+            {
+                <tr>
+                    <td>@product.tenMon</td>
+                    <td>@product.giaBan</td>
+                    <td>@product.noiDung</td>
+                    <td><img src="@product.anhDD" style="width: 100px;"/></td>
+                    <td>@product.soLuongTon</td>
+                    <td>@product.soLuongBan</td>
+                    <td>
+                        <a href="@Url.Action("EditProduct", "Admin", new { id = product.id })" class="btn btn-sm btn-warning">Sửa</a>
+                        <a href="@Url.Action("DetailProduct", "Admin", new { id = product.id })" class="btn btn-sm btn-primary">Chi tiết</a>
+                        <a href="@Url.Action("DeleteProduct", "Admin", new { id = product.id })" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa?');">Xóa</a>
+                    </td>
+                </tr>
+            }
+        }
+
+        else
+        {
+            <tr><td colspan="6" class="text-center">Không có dữ liệu</td></tr>
+        }
+    </tbody>
+</table>
+
+<!-- Phân trang -->
+<nav>
+    <ul class="pagination justify-content-center">
+        @if (currentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Product", new { page = currentPage - 1, limit = 10 })">Trước</a>
+            </li>
+        }
+
+        @for (int i = 1; i <= totalPages; i++)
+        {
+            <li class="page-item @(i == currentPage ? "active" : "")">
+                <a class="page-link" href="@Url.Action("Product", new { page = i, limit = 10 })">@i</a>
+            </li>
+        }
+
+        @if (currentPage < totalPages)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Product", new { page = currentPage + 1, limit = 10 })">Tiếp</a>
+            </li>
+        }
+    </ul>
+</nav>
+
+
