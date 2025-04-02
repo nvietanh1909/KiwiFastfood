@@ -1,39 +1,667 @@
-﻿<!DOCTYPE html>
-<html>
+﻿@using Newtonsoft.Json
+<!DOCTYPE html>
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
-    @Styles.Render("~/Content/css")
+    <title>@ViewBag.Title - Kiwi Fastfood</title>
+    <link rel="icon" type="image/x-icon" href="@Url.Content("~/favicon.ico")" />
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Kiwi Fastfood - Đặt đồ ăn nhanh online với nhiều món ăn ngon, giá cả hợp lý. Giao hàng nhanh chóng, an toàn và chất lượng." />
+    <meta name="keywords" content="đồ ăn nhanh, fastfood, giao hàng, đặt đồ ăn online, kiwi fastfood" />
+    <meta name="author" content="Kiwi Fastfood" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@Request.Url.AbsoluteUri" />
+    <meta property="og:title" content="@ViewBag.Title - Kiwi Fastfood" />
+    <meta property="og:description" content="Kiwi Fastfood - Đặt đồ ăn nhanh online với nhiều món ăn ngon, giá cả hợp lý. Giao hàng nhanh chóng, an toàn và chất lượng." />
+    <meta property="og:image" content="@Url.Content("~/Content/images/logo.png")" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="@Request.Url.AbsoluteUri" />
+    <meta property="twitter:title" content="@ViewBag.Title - Kiwi Fastfood" />
+    <meta property="twitter:description" content="Kiwi Fastfood - Đặt đồ ăn nhanh online với nhiều món ăn ngon, giá cả hợp lý. Giao hàng nhanh chóng, an toàn và chất lượng." />
+    <meta property="twitter:image" content="@Url.Content("~/Content/images/logo.png")" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="@Request.Url.AbsoluteUri" />
+
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" 
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     @Scripts.Render("~/bundles/modernizr")
+    <style>
+        /* Reset default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f8f9fa;
+        }
+
+        /* Enhanced Navbar */
+        .navbar {
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            background: #fff !important;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #e4002b !important;
+            transition: color 0.3s;
+        }
+
+            .navbar-brand:hover {
+                color: #c1001f !important;
+            }
+
+        .nav-link {
+            padding: 0.5rem 1rem !important;
+            transition: all 0.3s;
+            color: #333 !important;
+            font-weight: 500;
+        }
+
+            .nav-link:hover {
+                color: #e4002b !important;
+                transform: translateY(-2px);
+            }
+
+        /* User Menu */
+        .user-menu {
+            position: relative;
+            display: inline-block;
+        }
+
+            .user-menu .dropdown-menu {
+                border: none;
+                box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+                border-radius: 10px;
+                padding: 10px 0;
+                min-width: 200px;
+            }
+
+            .user-menu .dropdown-item {
+                padding: 8px 20px;
+                color: #333;
+                transition: all 0.3s;
+            }
+
+                .user-menu .dropdown-item:hover {
+                    background: #f8f9fa;
+                    color: #e4002b;
+                }
+
+                .user-menu .dropdown-item i {
+                    width: 20px;
+                    margin-right: 10px;
+                    color: #666;
+                }
+
+        /* Cart Styles */
+        .cart-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: #e4002b;
+            border-radius: 50%;
+            text-decoration: none !important;
+            margin-left: 15px;
+            transition: all 0.3s ease;
+        }
+
+            .cart-wrapper:hover {
+                background: #c1001f;
+                transform: translateY(-2px);
+            }
+
+        .cart-icon {
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e4002b;
+            color: white;
+            border-radius: 50%;
+            min-width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 0 4px;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Main Content */
+        .body-content {
+            min-height: calc(100vh - 200px);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem 0;
+            color: #666;
+            border-top: 1px solid #eee;
+            margin-top: 2rem;
+            background: #fffdfd;
+        }
+
+        /* Floating Chat Button */
+        .floating-chat-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e4002b, #c1001f);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(228, 0, 43, 0.3);
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+            .floating-chat-btn:hover {
+                transform: scale(1.1) rotate(5deg);
+                box-shadow: 0 6px 20px rgba(228, 0, 43, 0.4);
+            }
+
+            .floating-chat-btn i {
+                font-size: 24px;
+            }
+
+        .chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .chat-toggle-round {
+            width: 60px;
+            height: 60px;
+            background: #e4002b;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(228, 0, 43, 0.3);
+            color: white;
+            font-size: 24px;
+            padding: 0;
+            z-index: 1000;
+        }
+
+        .chat-container {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+            display: none;
+            z-index: 999;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #e4002b, #c1001f);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-logo {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: white;
+            padding: 5px;
+        }
+
+        .chat-title h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .chat-subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+            display: block;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 5px;
+            font-size: 20px;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+            .close-btn:hover {
+                opacity: 1;
+            }
+
+        #chatbox {
+            height: 350px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f8f9fa;
+        }
+
+        .chat-input {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #fff;
+            border-top: 1px solid #eee;
+            gap: 10px;
+        }
+
+            .chat-input input {
+                flex: 1;
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                border-radius: 20px;
+                outline: none;
+                font-size: 14px;
+            }
+
+                .chat-input input:focus {
+                    border-color: #e4002b;
+                    box-shadow: 0 0 0 2px rgba(228, 0, 43, 0.1);
+                }
+
+        .send-btn {
+            background: #e4002b;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+            .send-btn:hover {
+                background: #c1001f;
+                transform: scale(1.1);
+            }
+
+        .message {
+            margin-bottom: 15px;
+        }
+
+        .message-content {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 85%;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            line-height: 1.4;
+        }
+
+        .user-message .message-content {
+            background: #e8f4ff;
+            margin-left: auto;
+        }
+
+        .welcome-message .message-content {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        #messages {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
-            @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
+            @Html.ActionLink("Kiwi Fastfood", "Home", "Home", new { area = "" }, new { @class = "navbar-brand" })
+
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarContent"
+                    aria-controls="navbarContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item" style="margin-bottom: 0">
+                        @Html.ActionLink("Về chúng tôi", "About", "Home", new { area = "" }, new { @class = "nav-link" })
+                    </li>
+                    <li class="nav-item" style="margin-bottom: 0">
+                        @Html.ActionLink("Danh sách món ăn", "Product", "Product", new { area = "" }, new { @class = "nav-link" })
+                    </li>
+                    <li class="nav-item" style="margin-bottom: 0">
+                        @Html.ActionLink("Liên hệ", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })
+                    </li>
+                </ul>
+
+
+
+                <ul class="navbar-nav ms-auto">
+                    @if (Session["UserToken"] != null)
+                    {
+                        <li class="nav-item" style="margin-bottom: 0">
+                            <div class="user-menu">
+                                <a style="display: flex; justify-content: center; align-items: center;" class="nav-link dropdown-toggle" href="@Url.Action("Profile", "User")" id="userDropdown" role="button">
+                                    <i style="font-size: 22px" class="fas fa-user-circle me-1"></i>
+                                    @{
+                                        dynamic userInfo = JsonConvert.DeserializeObject(Session["UserInfo"]?.ToString() ?? "{}");
+                                        @userInfo.hoTen
+                                    }
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    @if (Session["UserRole"]?.ToString() == "admin")
+                                    {
+                                        <li>
+                                            @Html.ActionLink("Trang admin", "User", "Admin", new { area = "" },
+                                                                         new { @class = "dropdown-item" })
+                                        </li>
+                                    }
+                                    <li>
+                                        @Html.ActionLink("Thông tin cá nhân", "Profile", "User", new { area = "" },
+                                                                     new { @class = "dropdown-item" })
+                                    </li>
+                                    <li>
+                                        @Html.ActionLink("Chi tiết đơn hàng", "Order", "Order", new { area = "" },
+                                                                     new { @class = "dropdown-item" })
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        @Html.ActionLink("Đăng xuất", "Logout", "User", new { area = "" },
+                                                                     new { @class = "dropdown-item" })
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li style="margin-bottom: 0" class="nav-item">
+                            @if (Session["Admin"] != null)
+                            {
+                                <ul class="navbar-nav me-auto">
+                                    <li class="nav-item" style="margin-bottom: 0">
+                                        @Html.ActionLink("Trang admin", "User", "Admin")
+                                    </li>
+                                </ul>
+                            }
+                        </li>
+                        <li style="margin-bottom: 0" class="nav-item">
+                            <a href="@Url.Action("Cart", "Cart")" class="cart-wrapper">
+                                <i class="fas fa-shopping-cart cart-icon"></i>
+                                @if (Session["CartCount"] != null && (int)Session["CartCount"] > 0)
+                                {
+                                    <span class="cart-count">@Session["CartCount"]</span>
+                                }
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li style="margin-bottom: 0" class="nav-item">
+                            @Html.ActionLink("Đăng nhập", "Login", "User", new { area = "" },
+                                                         new { @class = "nav-link" })
+                        </li>
+                        <li class="nav-item" style="margin-bottom: 0">
+                            @Html.ActionLink("Đăng ký", "Register", "User", new { area = "" },
+                                                         new { @class = "nav-link" })
+                        </li>
+                    }
                 </ul>
             </div>
         </div>
     </nav>
+
+    <!-- Main Content -->
     <div class="container body-content">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© @DateTime.Now.Year - Kiwi Fastfood</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+            crossorigin="anonymous"></script>
+
     @RenderSection("scripts", required: false)
+
+    <!-- Chat Widget -->
+    @if (Session["UserToken"] != null)
+    {
+        <div class="chat-widget">
+            <!-- Chat Toggle Button -->
+            <button type="button" class="chat-toggle-round">
+                <i class="fas fa-comments"></i>
+            </button>
+
+            <!-- Chat Container -->
+            <div class="chat-container" id="chatContainer">
+                <div class="chat-header">
+                    <div class="chat-title">
+                        <img src="@Url.Content("~/Assets/Chatbot/istockphoto.jpg")" alt="Kiwi Logo" class="chat-logo">
+                        <div>
+                            <h2>Kiwi Bot</h2>
+                            <span class="chat-subtitle">Hỗ trợ trực tuyến</span>
+                        </div>
+                    </div>
+                    <button class="close-btn" onclick="toggleChat()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="chatbox">
+                    <div id="messages">
+                        <div class="message bot-message welcome-message">
+                            <div class="message-content">
+                                <div class="message-text">
+                                    Xin chào! Tôi là trợ lý ảo của Kiwi Fastfood. Tôi có thể giúp gì cho bạn hôm nay?
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="messageInput" placeholder="Nhập tin nhắn của bạn..." />
+                    <button onclick="sendMessage()" class="send-btn" title="Gửi tin nhắn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <script>
+        $(document).ready(function() {
+            // Chat toggle functionality
+            $(".chat-toggle-round").on("click", function(e) {
+                e.preventDefault();
+                toggleChat();
+            });
+
+            // Handle message input
+            $("#messageInput").on("keypress", function(e) {
+                if (e.which == 13) {
+                    sendMessage();
+                    return false;
+                }
+            });
+
+            // Close chat when clicking outside
+            $(document).on("click", function(e) {
+                if (!$(e.target).closest(".chat-widget").length && 
+                    !$(e.target).hasClass("chat-toggle-round") && 
+                    $("#chatContainer").is(":visible")) {
+                    $("#chatContainer").slideUp(300);
+                }
+            });
+
+            // Stop propagation on chat container clicks
+            $(".chat-container").on("click", function(e) {
+                e.stopPropagation();
+            });
+        });
+
+        function toggleChat() {
+            var chatContainer = $("#chatContainer");
+            chatContainer.slideToggle(300);
+            
+            if (chatContainer.is(":visible")) {
+                $("#messageInput").focus();
+                scrollToBottom();
+            }
+        }
+
+        function scrollToBottom() {
+            var chatbox = $("#chatbox");
+            chatbox.scrollTop(chatbox[0].scrollHeight);
+        }
+
+        function sendMessage() {
+            var message = $("#messageInput").val().trim();
+            if (!message) {
+                return;
+            }
+
+            $("#messageInput").prop('disabled', true);
+            $(".send-btn").prop('disabled', true);
+
+            $("#messages").append(`
+                <div class="message user-message">
+                    <div class="message-content">
+                        ${escapeHtml(message)}
+                    </div>
+                </div>
+            `);
+            $("#messageInput").val("");
+            scrollToBottom();
+
+            $("#messages").append(`
+                <div id="typing-indicator" class="message">
+                    <div class="message-content">
+                        <i>Đang nhập...</i>
+                    </div>
+                </div>
+            `);
+            scrollToBottom();
+
+            $.post("/Chatbot/SendMessage", { message: message }, function (response) {
+                $("#typing-indicator").remove();
+
+                if (response.success) {
+                    $("#messages").append(`
+                        <div class="message bot-message">
+                            <div class="message-content">
+                                ${escapeHtml(response.data)}
+                            </div>
+                        </div>
+                    `);
+                } else {
+                    $("#messages").append(`
+                        <div class="message bot-message">
+                            <div class="message-content error">
+                                Xin lỗi, có lỗi xảy ra. Vui lòng thử lại sau.
+                            </div>
+                        </div>
+                    `);
+                }
+
+                $("#messageInput").prop('disabled', false);
+                $(".send-btn").prop('disabled', false);
+                $("#messageInput").focus();
+                scrollToBottom();
+            }).fail(function () {
+                $("#typing-indicator").remove();
+                $("#messages").append(`
+                    <div class="message bot-message">
+                        <div class="message-content error">
+                            Xin lỗi, có lỗi kết nối. Vui lòng thử lại sau.
+                        </div>
+                    </div>
+                `);
+
+                $("#messageInput").prop('disabled', false);
+                $(".send-btn").prop('disabled', false);
+                $("#messageInput").focus();
+                scrollToBottom();
+            });
+        }
+
+        function escapeHtml(text) {
+            var map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function (m) { return map[m]; });
+        }
+    </script>
 </body>
 </html>

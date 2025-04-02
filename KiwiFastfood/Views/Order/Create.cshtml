@@ -1,0 +1,299 @@
+﻿@{
+    ViewBag.Title = "Thanh toán - Kiwi Fastfood";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="checkout-container my-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-11">
+                <!-- Tiêu đề -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h3 fw-bold text-dark">Thanh toán đơn hàng</h1>
+                    <a href="@Url.Action("Cart", "Cart")" class="text-muted small"><i class="fas fa-arrow-left me-1"></i> Quay lại giỏ hàng</a>
+                </div>
+
+                <!-- Thông báo -->
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm" role="alert">
+                        <i class="fas fa-check-circle me-2"></i> @TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i> @TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                @if (ViewBag.Cart != null && ViewBag.Cart.items != null && ViewBag.Cart.items.Count > 0)
+                {
+                    <div class="row g-4">
+                        <!-- Form thanh toán -->
+                        <div class="col-lg-6 order-lg-2">
+                            <div class="card border-0 shadow rounded-3">
+                                <div class="card-body p-4">
+                                    <h5 class="checkout-title"><i class="fas fa-truck me-2 text-primary"></i> Thông tin giao hàng</h5>
+                                    @using (Html.BeginForm("Create", "Order", FormMethod.Post, new { @class = "needs-validation", @novalidate = "novalidate" }))
+                                    {
+                                        <div class="form-group">
+                                            <label for="shippingAddress" class="form-label">Địa chỉ giao hàng <span class="text-danger">*</span></label>
+                                            <textarea name="shippingAddress" id="shippingAddress" class="form-control" rows="2" placeholder="Nhập địa chỉ chi tiết của bạn" required></textarea>
+                                            <div class="invalid-feedback">Vui lòng nhập địa chỉ giao hàng.</div>
+                                        </div>
+
+                                        <div class="row gx-3">
+                                            <div class="col-md-6 form-group">
+                                                <label for="city" class="form-label">Thành phố</label>
+                                                <input type="text" name="city" id="city" class="form-control" value="Thành phố Hồ Chí Minh" readonly />
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label for="state" class="form-label">Quận/Huyện <span class="text-danger">*</span></label>
+                                                <input type="text" name="state" id="state" class="form-control" placeholder="Nhập quận/huyện" required />
+                                                <div class="invalid-feedback">Vui lòng nhập quận/huyện.</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="phoneNumber" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                                            <input type="tel" name="phoneNumber" id="phoneNumber" class="form-control" placeholder="Nhập số điện thoại của bạn" required pattern="[0-9]{10}" />
+                                            <div class="invalid-feedback">Số điện thoại phải có 10 chữ số.</div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="notes" class="form-label">Ghi chú</label>
+                                            <textarea name="notes" id="notes" class="form-control" rows="3" placeholder="Nhập yêu cầu đặc biệt của bạn (nếu có)"></textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="paymentMethod" class="form-label">Phương thức thanh toán <span class="text-danger">*</span></label>
+                                            <select name="paymentMethod" id="paymentMethod" class="form-select" required>
+                                                <option value="" disabled selected>Chọn phương thức thanh toán</option>
+                                                <option value="cash">Thanh toán khi nhận hàng (COD)</option>
+                                                <option value="online_payment">VN PAY</option>
+                                            </select>
+                                            <div class="invalid-feedback">Vui lòng chọn phương thức thanh toán.</div>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="fas fa-check-circle me-2"></i> Đặt hàng ngay
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thông tin đơn hàng -->
+                        <div class="col-lg-6 order-lg-1">
+                            <div class="card border-0 shadow rounded-3">
+                                <div class="card-body p-4">
+                                    <h5 class="checkout-title"><i class="fas fa-shopping-bag me-2 text-primary"></i> Đơn hàng của bạn</h5>
+                                    <div class="checkout-items">
+                                        @{
+                                            decimal totalAmount = 0; // Khai báo totalAmount trước vòng lặp
+                                        }
+                                        @foreach (var cartItem in ViewBag.Cart.items)
+                                        {
+                                            decimal itemTotal = (cartItem.quantity ?? 1) * cartItem.product.giaBan;
+                                            totalAmount += itemTotal;
+                                            <div class="d-flex align-items-center border-bottom py-3">
+                                                <div class="flex-grow-1">
+                                                    <p class="mb-1 fw-medium">@cartItem.product.tenMon</p>
+                                                    <small class="text-muted">Đơn giá: @String.Format("{0:N0}đ", cartItem.product.giaBan)</small>
+                                                </div>
+                                                <div class="text-center px-3">
+                                                    <small class="text-muted">x@(cartItem.quantity ?? 1)</small>
+                                                </div>
+                                                <div class="text-end fw-semibold">@String.Format("{0:N0}đ", itemTotal)</div>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="mt-4">
+                                        <div class="d-flex justify-content-between py-2">
+                                            <span class="fw-medium">Tổng tiền hàng:</span>
+                                            <span>@String.Format("{0:N0}đ", totalAmount)</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between py-2 border-top">
+                                            <span class="fw-bold text-dark">Tổng thanh toán:</span>
+                                            <span class="fw-bold text-danger">@String.Format("{0:N0}đ", totalAmount)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center my-5 py-5 bg-light rounded-3 shadow-sm">
+                        <i class="fas fa-shopping-cart fa-5x text-muted mb-4"></i>
+                        <h4 class="fw-semibold text-dark">Giỏ hàng trống</h4>
+                        <p class="text-muted mb-4">Thêm món ăn yêu thích để bắt đầu thanh toán!</p>
+                        <a href="@Url.Action("Index", "Product")" class="btn btn-primary px-5 py-2 fw-medium rounded-3 shadow-sm">
+                            <i class="fas fa-shopping-bag me-2"></i> Khám phá ngay
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .checkout-container {
+        background-color: #f8f9fa;
+        min-height: calc(100vh - 100px);
+        padding: 40px 0;
+    }
+
+    .checkout-items {
+        max-height: 400px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #dee2e6 #fff;
+    }
+
+    .checkout-items::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .checkout-items::-webkit-scrollbar-track {
+        background: #fff;
+    }
+
+    .checkout-items::-webkit-scrollbar-thumb {
+        background-color: #dee2e6;
+        border-radius: 6px;
+    }
+
+    .card {
+        transition: all 0.2s ease-in-out;
+        border: none;
+    }
+
+    .form-label {
+        color: #344767;
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border: 1px solid #dee2e6;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        border-radius: 0.5rem;
+        background-color: #fff;
+        transition: all 0.2s ease-in-out;
+        width: 100%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #e4002b;
+        box-shadow: 0 0 0 0.2rem rgba(228, 0, 43, 0.1);
+    }
+
+    .form-control::placeholder {
+        color: #adb5bd;
+    }
+
+    textarea.form-control {
+        min-height: 100px;
+        resize: none;
+    }
+
+    .btn-primary {
+        background-color: #e4002b;
+        border-color: #e4002b;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-primary:hover {
+        background-color: #c1001f;
+        border-color: #c1001f;
+        transform: translateY(-2px);
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .text-danger {
+        color: #e4002b !important;
+    }
+
+    .invalid-feedback {
+        font-size: 0.75rem;
+        color: #e4002b;
+        margin-top: 0.25rem;
+    }
+
+    .form-control.is-invalid, .form-select.is-invalid {
+        border-color: #e4002b;
+        background-image: none;
+    }
+
+    .form-control.is-invalid:focus {
+        border-color: #e4002b;
+        box-shadow: 0 0 0 0.2rem rgba(228, 0, 43, 0.1);
+    }
+
+    .row.g-4 {
+        margin: 0;
+    }
+
+    .col-lg-6 {
+        padding: 1rem;
+    }
+
+    .checkout-title {
+        color: #344767;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .checkout-title i {
+        color: #e4002b;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+</style>
+
+@section Scripts {
+    <script>
+        (function () {
+            'use strict';
+            var forms = document.querySelectorAll('.needs-validation');
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+
+        $(document).ready(function () {
+            setTimeout(function () {
+                $('.alert').alert('close');
+            }, 5000);
+        });
+    </script>
+}

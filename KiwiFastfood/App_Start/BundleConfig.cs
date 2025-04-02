@@ -25,6 +25,9 @@ namespace KiwiFastfood
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+
+            // Optimize bundles
+            BundleTable.EnableOptimizations = true;
         }
     }
 }

@@ -27,8 +27,7 @@ namespace KiwiFastfood.Services
             response.EnsureSuccessStatusCode();
             var responseData = await response.Content.ReadAsStringAsync();
             dynamic result = JsonConvert.DeserializeObject(responseData);
-            _token = result.data.token;
-            SetToken(_token);
+            SetToken((string)result.data.token);
             return responseData;
         }
 

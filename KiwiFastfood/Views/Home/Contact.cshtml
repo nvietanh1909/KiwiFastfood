@@ -1,19 +1,125 @@
 ﻿@{
-    ViewBag.Title = "Contact";
+    ViewBag.Title = "Liên hệ - Kiwi Fastfood";
 }
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
 
-    <address>
-        One Microsoft Way<br />
-        Redmond, WA 98052-6399<br />
-        <abbr title="Phone">P:</abbr>
-        425.555.0100
-    </address>
+<link href="@Url.Content("~/Content/css/contact.css")" rel="stylesheet" />
 
-    <address>
-        <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-        <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-    </address>
-</main>
+<!-- Hero Section -->
+<section class="contact-hero" style="background-image: url('https://pub-8f93a6916cdb4dc794cd302df2e65ea0.r2.dev/Introduce/pexels-anntarazevich-7771963.jpg') ">
+    <div class="hero-content">
+        <h1>Liên hệ với chúng tôi</h1>
+        <p>Chúng tôi luôn sẵn sàng lắng nghe và phục vụ bạn</p>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact-section">
+    <div class="contact-container">
+        <div class="contact-info">
+            <h2 class="info-title">Thông tin liên hệ</h2>
+            <p class="info-description">
+                Hãy liên hệ với chúng tôi nếu bạn có bất kỳ câu hỏi nào. Chúng tôi sẽ phản hồi trong thời gian sớm nhất.
+            </p>
+            <ul class="contact-details">
+                <li class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="contact-text">
+                        <h3>Địa chỉ</h3>
+                        <p>123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh</p>
+                    </div>
+                </li>
+                <li class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <div class="contact-text">
+                        <h3>Điện thoại</h3>
+                        <p>+84 123 456 789</p>
+                    </div>
+                </li>
+                <li class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-text">
+                        <h3>Email</h3>
+                        <p>info@kiwifastfood.com</p>
+                    </div>
+                </li>
+                <li class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="contact-text">
+                        <h3>Giờ làm việc</h3>
+                        <p>Thứ 2 - Chủ nhật: 8:00 - 22:00</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="contact-form">
+            <h3 class="form-title">Gửi tin nhắn cho chúng tôi</h3>
+            @using (Html.BeginForm("Contact", "Home", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                
+                <div class="form-group">
+                    <label class="form-label">Họ và tên</label>
+                    <input type="text" class="form-control" name="Name" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" name="Email" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Số điện thoại</label>
+                    <input type="tel" class="form-control" name="Phone">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Chủ đề</label>
+                    <input type="text" class="form-control" name="Subject" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nội dung</label>
+                    <textarea class="form-control" name="Message" rows="5" required></textarea>
+                </div>
+
+                <button type="submit" class="submit-button">Gửi tin nhắn</button>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+<section class="map-section">
+    <div class="map-container">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.325247630613!2d106.66372207465957!3d10.786382259318593!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752ed2392c44df%3A0xd2ecb62e0d050fe9!2sFPT-Aptech%20Computer%20Education%20HCM!5e0!3m2!1sen!2s!4v1709391629071!5m2!1sen!2s" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+</section>
+
+<!-- Social Media Section -->
+<section class="social-section">
+    <h2 class="social-title">Kết nối với chúng tôi</h2>
+    <div class="social-links">
+        <a href="#" class="social-link">
+            <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="#" class="social-link">
+            <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#" class="social-link">
+            <i class="fab fa-instagram"></i>
+        </a>
+        <a href="#" class="social-link">
+            <i class="fab fa-youtube"></i>
+        </a>
+    </div>
+</section>
+

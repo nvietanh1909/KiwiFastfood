@@ -6,12 +6,17 @@ using System.Web.Mvc;
 using KiwiFastfood.Services;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace KiwiFastfood.Controllers
 {
     public class HomeController : Controller
     {
         private readonly UserService _userService;
+        private readonly ProductService _productService = new ProductService();
+
+        private bool _isLogin { get => Session["UserToken"] != null; }
+
 
         public HomeController()
         {
@@ -32,38 +37,28 @@ namespace KiwiFastfood.Controllers
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "Your application description page.";
 
             return View();
         }
 
-        public async Task<ActionResult> Home()
+
+        public async Task<ActionResult> Home(int page = 1, int limit = 8)
         {
             try
             {
-                // Kiểm tra trạng thái đăng nhập
-                if (Session["UserToken"] == null)
-                {
-                    return RedirectToAction("Login", "User");
-                }
+                var response = await _productService.GetRecommendProductAsync(new { page, limit });
 
-                // Lấy token từ session và gán cho UserService
-                string token = Session["UserToken"].ToString();
-                _userService.SetToken(token);
+                dynamic result = JsonConvert.DeserializeObject(response);
 
-                // Lấy thông tin người dùng
-                var response = await _userService.GetUserProfileAsync();
-                dynamic userProfile = JObject.Parse(response);
+                ViewBag.Products = result.data.products;
+                ViewBag.Pagination = result.data.pagination;
 
-                // Truyền thông tin người dùng sang view
-                ViewBag.UserProfile = userProfile.data;
-                
                 return View();
             }
             catch (Exception ex)
             {
-                // Xử lý lỗi nếu có
-                ViewBag.ErrorMessage = "Không thể lấy thông tin người dùng: " + ex.Message;
+                ViewBag.ErrorMessage = "Không thể tải danh sách sản phẩm: " + ex.Message;
                 return View();
             }
         }

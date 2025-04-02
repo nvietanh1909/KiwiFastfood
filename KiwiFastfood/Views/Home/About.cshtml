@@ -1,9 +1,143 @@
 ﻿@{
-    ViewBag.Title = "About";
+    ViewBag.Title = "Về chúng tôi - Kiwi Fastfood";
 }
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
 
-    <p>Use this area to provide additional information.</p>
-</main>
+<link href="@Url.Content("~/Content/css/about.css")" rel="stylesheet" />
+
+<!-- Hero Section -->
+<section class="about-hero" style="background-image: url('https://pub-8f93a6916cdb4dc794cd302df2e65ea0.r2.dev/Introduce/introduce.jpg')">
+    <div class="hero-content">
+        <h1>Chào mừng đến với Kiwi Fastfood</h1>
+        <p>Nơi hội tụ những hương vị tuyệt vời và trải nghiệm ẩm thực độc đáo</p>
+    </div>
+</section>
+
+<!-- Our Story Section -->
+<section class="our-story">
+    <div class="container">
+        <div class="section-title">
+            <h2>Câu chuyện của chúng tôi</h2>
+        </div>
+        <div class="story-content">
+            <div class="story-text">
+                <p>Kiwi Fastfood được thành lập với tình yêu và đam mê ẩm thực. Chúng tôi bắt đầu hành trình của mình từ một cửa hàng nhỏ và dần phát triển thành một trong những thương hiệu fastfood được yêu thích nhất tại Việt Nam.</p>
+                <p>Với hơn 10 năm kinh nghiệm trong ngành, chúng tôi tự hào mang đến cho khách hàng những món ăn ngon, chất lượng với giá cả hợp lý. Mỗi món ăn đều được chế biến từ những nguyên liệu tươi ngon nhất, đảm bảo vệ sinh an toàn thực phẩm.</p>
+                <p>Sứ mệnh của chúng tôi là mang đến niềm vui và hạnh phúc cho khách hàng thông qua những bữa ăn ngon miệng và dịch vụ chu đáo.</p>
+            </div>
+            <div class="story-image">
+                <img src="@Url.Content("https://pub-8f93a6916cdb4dc794cd302df2e65ea0.r2.dev/Introduce/introduce1.jpg")" alt="Câu chuyện Kiwi Fastfood">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Values Section -->
+<section class="our-values">
+    <div class="container">
+        <div class="section-title">
+            <h2>Giá trị cốt lõi</h2>
+        </div>
+        <div class="values-grid">
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h3>Đam mê</h3>
+                <p>Chúng tôi làm việc với tất cả niềm đam mê và tình yêu với ẩm thực</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <h3>Chất lượng</h3>
+                <p>Cam kết mang đến những sản phẩm và dịch vụ chất lượng nhất</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Khách hàng</h3>
+                <p>Luôn đặt sự hài lòng của khách hàng lên hàng đầu</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Team Section -->
+<section class="our-team">
+    <div class="container">
+        <div class="section-title">
+            <h2>Đội ngũ của chúng tôi</h2>
+        </div>
+        <div class="team-grid">
+            <div class="team-member">
+                <div class="member-image">
+                    <img src="@Url.Content("https://pub-8f93a6916cdb4dc794cd302df2e65ea0.r2.dev/Introduce/pro5.jpg")" alt="Team Member">
+                </div>
+                <div class="member-info">
+                    <h3>Nguyễn Việt Anh</h3>
+                    <p>Bếp trưởng</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="team-member">
+                <div class="member-image">
+                    <img src="@Url.Content("https://pub-8f93a6916cdb4dc794cd302df2e65ea0.r2.dev/Introduce/pro5.jpg")" alt="Team Member">
+                </div>
+                <div class="member-info">
+                    <h3>Nguyễn Việt Anh</h3>
+                    <p>Quản lý</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="team-member">
+                <div class="member-image">
+                    <img src="@Url.Content("https://pub-8f93a6916cdb4dc794cd302df2e65ea0.r2.dev/Introduce/pro5.jpg")" alt="Team Member">
+                </div>
+                <div class="member-info">
+                    <h3>Nguyễn Việt Anh</h3>
+                    <p>Đầu bếp</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="team-member">
+                <div class="member-image">
+                    <img src="@Url.Content("https://pub-8f93a6916cdb4dc794cd302df2e65ea0.r2.dev/Introduce/pro5.jpg")" alt="Team Member">
+                </div>
+                <div class="member-info">
+                    <h3>Nguyễn Việt Anh</h3>
+                    <p>Chăm sóc khách hàng</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact-section" style="background-image: url('@Url.Content("https://pub-8f93a6916cdb4dc794cd302df2e65ea0.r2.dev/Introduce/pexels-planka-27060617.jpg")')">
+    <div class="container">
+        <div class="contact-content">
+            <h2>Liên hệ với chúng tôi</h2>
+            <p>Hãy để lại thông tin để chúng tôi có thể phục vụ bạn tốt hơn</p>
+            <a href="@Url.Action("Contact", "Home")" class="contact-button">Liên hệ ngay</a>
+        </div>
+    </div>
+</section>
+

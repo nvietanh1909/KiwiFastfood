@@ -1,0 +1,171 @@
+﻿@{
+    ViewBag.Title = "Đơn hàng của tôi - Kiwi Fastfood";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-4">
+    <h2>Đơn hàng của bạn</h2>
+
+    <!-- Hiển thị thông báo -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @ViewBag.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Kiểm tra đơn hàng -->
+    @if (ViewBag.Orders != null && ViewBag.Orders.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Mã đơn hàng</th>
+                        <th>Ngày đặt</th>
+                        <th>Số lượng món</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th>Trạng thái thanh toán</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in ViewBag.Orders)
+                    {
+                        <tr>
+                            <td>@(order.createdAt != null ? DateTime.Parse(order.createdAt.ToString()).ToString("dd/MM/yyyy HH:mm") : "N/A")</td>
+                            <td>
+                                @(order.items != null ? order.items.Count : 0) món
+                            </td>
+                            <td>@String.Format("{0:N0}đ", order.totalPrice)</td>
+                            <td>
+                                @{
+                                    string statusClass = "badge bg-secondary";
+                                    string statusText = "Không xác định";
+
+                                    if (order.status != null)
+                                    {
+                                        switch (order.status.ToString().ToLower())
+                                        {
+                                            case "pending":
+                                                statusClass = "badge bg-warning text-dark";
+                                                statusText = "Đang xử lý";
+                                                break;
+                                            case "processing":
+                                                statusClass = "badge bg-info text-dark";
+                                                statusText = "Đang chuẩn bị";
+                                                break;
+                                            case "shipped":
+                                                statusClass = "badge bg-primary";
+                                                statusText = "Đang giao hàng";
+                                                break;
+                                            case "delivered":
+                                                statusClass = "badge bg-success";
+                                                statusText = "Đã giao hàng";
+                                                break;
+                                            case "cancelled":
+                                                statusClass = "badge bg-danger";
+                                                statusText = "Đã hủy";
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                }
+                                <span class="@statusClass">@statusText</span>
+                            </td>
+                            <td>
+                                @{
+                                    string paymentStatusClass = "badge bg-secondary";
+                                    string paymentStatusText = "Không xác định";
+
+                                    if (order.paymentStatus != null)
+                                    {
+                                        switch (order.paymentStatus.ToString().ToLower())
+                                        {
+                                            case "pending":
+                                                paymentStatusClass = "badge bg-warning text-dark";
+                                                paymentStatusText = "Chưa thanh toán";
+                                                break;
+                                            case "paid":
+                                                paymentStatusClass = "badge bg-success";
+                                                paymentStatusText = "Đã thanh toán";
+                                                break;
+                                            case "refunded":
+                                                paymentStatusClass = "badge bg-info";
+                                                paymentStatusText = "Đã hoàn tiền";
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                }
+                                <span class="@paymentStatusClass">@paymentStatusText</span>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Detail", "Order", new { id = order._id })" class="btn btn-primary btn-sm">Chi tiết</a>
+                                
+                                @if (order.status != null && 
+                                     (order.status.ToString().ToLower() == "pending" || order.status.ToString().ToLower() == "processing") && 
+                                     (order.paymentStatus == null || order.paymentStatus.ToString().ToLower() == "pending"))
+                                {
+                                    using (Html.BeginForm("Cancel", "Order", FormMethod.Post, new { @class = "d-inline" }))
+                                    {
+                                        <input type="hidden" name="id" value="@order._id" />
+                                        <button type="submit" class="btn btn-danger btn-sm" 
+                                                onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
+                                            Hủy đơn
+                                        </button>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="mt-3">
+            <a href="@Url.Action("Index", "Product")" class="btn btn-primary">Tiếp tục mua sắm</a>
+        </div>
+    }
+    else
+    {
+        <div class="text-center my-5">
+            <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
+            <h4>Bạn chưa có đơn hàng nào</h4>
+            <p class="text-muted">Hãy mua sắm và đặt hàng ngay!</p>
+            <a href="@Url.Action("Index", "Product")" class="btn btn-primary mt-3">Mua sắm ngay</a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-dismiss alerts after 5 seconds
+        $(document).ready(function () {
+            setTimeout(function () {
+                $('.alert').alert('close');
+            }, 5000);
+        });
+    </script>
+}
+

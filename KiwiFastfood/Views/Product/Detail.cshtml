@@ -1,0 +1,489 @@
+﻿@{
+    ViewBag.Title = ViewBag.Product.tenMon + " - Kiwi Fastfood";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .product-detail {
+        padding: 40px 0;
+        background: #f8f9fa;
+    }
+
+    .product-container {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        padding: 30px;
+    }
+
+    .product-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        align-items: start;
+    }
+
+    .product-gallery {
+        position: sticky;
+        top: 20px;
+    }
+
+    .main-image {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .product-info h1 {
+        font-size: 28px;
+        font-weight: 600;
+        color: #333;
+        margin: 0 0 15px;
+    }
+
+    .product-price {
+        font-size: 32px;
+        font-weight: 600;
+        color: #e4002b;
+        margin-bottom: 20px;
+    }
+
+    .product-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        font-size: 16px;
+    }
+
+    .product-meta {
+        margin-bottom: 30px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+        color: #666;
+    }
+
+    .meta-item i {
+        color: #e4002b;
+        width: 20px;
+    }
+
+    .meta-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .quantity-section {
+        margin-bottom: 30px;
+    }
+
+    .quantity-label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .quantity-controls {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: #f8f9fa;
+        padding: 5px;
+        border-radius: 8px;
+    }
+
+    .quantity-controls button {
+        width: 36px;
+        height: 36px;
+        border: none;
+        background: #fff;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .quantity-controls button:hover {
+        background: #e4002b;
+        color: #fff;
+    }
+
+    .quantity-controls input {
+        width: 60px;
+        height: 36px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .add-to-cart {
+        width: 100%;
+        padding: 16px;
+        background: #e4002b;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .add-to-cart:hover {
+        background: #c1001f;
+        transform: translateY(-2px);
+    }
+
+    .add-to-cart i {
+        font-size: 20px;
+    }
+
+    .product-categories {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .category-tag {
+        padding: 6px 12px;
+        background: #f8f9fa;
+        border-radius: 20px;
+        color: #666;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .category-tag i {
+        color: #e4002b;
+        font-size: 12px;
+    }
+
+    .success-alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        background: #28a745;
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        display: none;
+        z-index: 1000;
+    }
+
+    .reviews-section {
+        margin-top: 40px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        padding: 30px;
+    }
+
+    .reviews-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .reviews-header h2 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+    }
+
+    .review-item {
+        padding: 20px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .review-item:last-child {
+        border-bottom: none;
+    }
+
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .reviewer-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .reviewer-name {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .review-date {
+        color: #999;
+        font-size: 14px;
+    }
+
+    .star-rating {
+        color: #ffd700;
+        margin: 10px 0;
+    }
+
+    .review-comment {
+        color: #666;
+        line-height: 1.5;
+    }
+
+    .review-form {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 2px solid #eee;
+    }
+
+    .rating-input {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .rating-input label {
+        cursor: pointer;
+        font-size: 24px;
+        color: #ddd;
+        transition: color 0.2s;
+    }
+
+    .quantity-input {
+        width: 80px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 8px;
+        margin-right: 10px;
+    }
+
+    .rating-input input:checked ~ label {
+        color: #ffd700;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+
+<div class="product-detail">
+    <div class="container">
+        @if (ViewBag.Product != null)
+        {
+            <div class="product-container">
+                <div class="product-grid">
+                    <div class="product-gallery">
+                        <img src="@ViewBag.Product.anhDD" alt="@ViewBag.Product.tenMon" class="main-image">
+                    </div>
+
+                    <div class="product-info">
+                        <h1>@ViewBag.Product.tenMon</h1>
+                        <div class="product-price">@String.Format("{0:N0}đ", ViewBag.Product.giaBan)</div>
+
+                        <div class="product-description">
+                            @ViewBag.Product.noiDung
+                        </div>
+
+                        <div class="product-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Đảm bảo chất lượng</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-truck"></i>
+                                <span>Giao hàng nhanh chóng</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-box"></i>
+                                <span>Còn @ViewBag.Product.soLuongTon sản phẩm</span>
+                            </div>
+                        </div>
+
+                        @if (ViewBag.Product.soLuongTon > 0)
+                        {
+                            <form action="@Url.Action("Add", "Cart")" method="post" class="d-flex align-items-center">
+                                <input type="hidden" name="productId" value="@ViewBag.product.id" />
+                                <input type="number" name="quantity" value="1" min="1" max="@ViewBag.product.soLuongTon"
+                                       class="quantity-input" />
+
+                                <button type="submit" class="add-to-cart">
+                                    Thêm vào giỏ hàng
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Sản phẩm đã hết hàng
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="reviews-section">
+                <div class="reviews-header">
+                    <h2>Đánh giá sản phẩm</h2>
+                </div>
+
+                @if (ViewBag.Product.ratings != null && ViewBag.Product.ratings.Count > 0)
+                {
+                    foreach (var rating in ViewBag.Product.ratings)
+                    {
+                        <div class="review-item">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <span class="reviewer-name">@rating.user.tenNguoiDung</span>
+                                </div>
+                                <span class="review-date">@rating.createdAt.ToString("dd/MM/yyyy HH:mm")</span>
+                            </div>
+                            <div class="star-rating">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= rating.rating)
+                                    {
+                                        <i class="fas fa-star"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="far fa-star"></i>
+                                    }
+                                }
+                            </div>
+                            <p class="review-comment">@rating.comment</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">Chưa có đánh giá nào cho sản phẩm này</p>
+                }
+
+                @if (ViewBag.Product.soLuongTon > 0)
+                {
+                    <div class="review-form">
+                        <h3>Đánh giá của bạn</h3>
+                        <form action="@Url.Action("AddRating", "Product")" method="post">
+                            <input type="hidden" name="productId" value="@ViewBag.Product._id" />
+                            <div class="rating-input">
+                                @for (int i = 5; i >= 1; i--)
+                                {
+                                    <input type="radio" name="rating" value="@i" id="star@i" required>
+                                    <label for="star@i"><i class="fas fa-star"></i></label>
+                                }
+                            </div>
+                            <div class="form-group">
+                                <textarea name="comment" class="form-control" rows="3" 
+                                          placeholder="Chia sẻ nhận xét của bạn về sản phẩm..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3">Gửi đánh giá</button>
+                        </form>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-danger">
+                Không tìm thấy thông tin sản phẩm
+            </div>
+        }
+    </div>
+</div>
+
+<div class="success-alert" id="successAlert">
+    <i class="fas fa-check-circle"></i>
+    Đã thêm sản phẩm vào giỏ hàng!
+</div>
+
+@section Scripts {
+    <script>
+        function updateQuantity(change) {
+            const input = document.getElementById('quantity');
+            const currentValue = parseInt(input.value) || 1;
+            const maxQuantity = @ViewBag.Product.soLuongTon;
+            const newValue = currentValue + change;
+            
+            if (newValue >= 1 && newValue <= maxQuantity) {
+                input.value = newValue;
+            }
+        }
+
+        function addToCart(productId) {
+            const quantity = document.getElementById('quantity').value;
+            
+            $.ajax({
+                url: '@Url.Action("Add", "Cart")',
+                type: 'POST',
+                data: { 
+                    productId: productId,
+                    quantity: quantity
+                },
+                success: function(result) {
+                    if (result.success) {
+                        showSuccessAlert();
+                        updateCartCount(result.cartCount);
+                    } else {
+                        alert(result.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng.');
+                    }
+                }
+            });
+        }
+
+        function showSuccessAlert() {
+            const alert = document.getElementById('successAlert');
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+
+        function updateCartCount(count) {
+            const cartCount = document.querySelector('.cart-count');
+            if (cartCount) {
+                cartCount.textContent = count;
+            }
+        }
+
+        // Prevent manual input of invalid quantities
+        document.getElementById('quantity').addEventListener('change', function() {
+            const value = parseInt(this.value) || 1;
+            const maxQuantity = @ViewBag.Product.soLuongTon;
+            this.value = Math.max(1, Math.min(maxQuantity, value));
+        });
+    </script>
+}

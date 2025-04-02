@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using KiwiFastfood.Services;
 using System.Net.Http;
 
+
 namespace KiwiFastfood.Controllers
 {
     public class ProductController : Controller
@@ -113,7 +114,9 @@ namespace KiwiFastfood.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+
         public async Task<ActionResult> Create(FormCollection form, HttpPostedFileBase anhDD)
+
         {
             if (!_isLogin || !_isAdmin) return RedirectToAction("Login", "User");
 

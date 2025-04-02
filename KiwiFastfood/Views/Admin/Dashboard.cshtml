@@ -1,0 +1,242 @@
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="dashboard">
+    <!-- Stats Overview -->
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stats-card">
+                <div class="stats-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <p class="stats-number">@ViewBag.TotalOrders</p>
+                <p class="stats-label">Tổng đơn hàng</p>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stats-card" style="background: linear-gradient(45deg, #2ecc71, #27ae60);">
+                <div class="stats-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <p class="stats-number">@String.Format("{0:N0}đ", ViewBag.TotalRevenue)</p>
+                <p class="stats-label">Doanh thu</p>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stats-card" style="background: linear-gradient(45deg, #3498db, #2980b9);">
+                <div class="stats-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <p class="stats-number">@ViewBag.TotalUsers</p>
+                <p class="stats-label">Người dùng</p>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stats-card" style="background: linear-gradient(45deg, #9b59b6, #8e44ad);">
+                <div class="stats-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <p class="stats-number">@ViewBag.TotalProducts</p>
+                <p class="stats-label">Sản phẩm</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Recent Orders -->
+        <div class="col-12 col-xl-8">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title">Đơn hàng gần đây</h5>
+                    <a href="@Url.Action("Order", "Admin")" class="btn btn-primary btn-sm">
+                        Xem tất cả
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover datatable">
+                            <thead>
+                                <tr>
+                                    <th>Mã đơn</th>
+                                    <th>Khách hàng</th>
+                                    <th>Tổng tiền</th>
+                                    <th>Trạng thái</th>
+                                    <th>Ngày đặt</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (ViewBag.RecentOrders != null)
+                                {
+                                    foreach (var order in ViewBag.RecentOrders)
+                                    {
+                                        <tr>
+                                            <td>#@order.id</td>
+                                            <td>@order.customerName</td>
+                                            <td>@String.Format("{0:N0}đ", order.totalAmount)</td>
+                                            <td>
+                                                @{
+                                                    var statusClass = order.status switch
+                                                    {
+                                                        "pending" => "bg-warning",
+                                                        "completed" => "bg-success",
+                                                        "cancelled" => "bg-danger",
+                                                        _ => "bg-secondary"
+                                                    };
+                                                }
+                                                <span class="badge @statusClass">@order.status</span>
+                                            </td>
+                                            <td>@order.createdAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales Chart -->
+        <div class="col-12 col-xl-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title">Thống kê doanh thu</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Products -->
+        <div class="col-12 col-xl-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Sản phẩm bán chạy</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th>Đã bán</th>
+                                    <th>Doanh thu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (ViewBag.TopProducts != null)
+                                {
+                                    foreach (var product in ViewBag.TopProducts)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="@product.image" alt="@product.name" 
+                                                         style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;" 
+                                                         class="me-2" />
+                                                    <span>@product.name</span>
+                                                </div>
+                                            </td>
+                                            <td>@product.soldCount</td>
+                                            <td>@String.Format("{0:N0}đ", product.revenue)</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Users -->
+        <div class="col-12 col-xl-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title">Người dùng mới</h5>
+                    <a href="@Url.Action("User", "Admin")" class="btn btn-primary btn-sm">
+                        Xem tất cả
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Người dùng</th>
+                                    <th>Email</th>
+                                    <th>Ngày đăng ký</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (ViewBag.RecentUsers != null)
+                                {
+                                    foreach (var user in ViewBag.RecentUsers)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="user-avatar me-2" style="width: 32px; height: 32px; font-size: 1rem;">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                    <span>@user.name</span>
+                                                </div>
+                                            </td>
+                                            <td>@user.email</td>
+                                            <td>@user.createdAt.ToString("dd/MM/yyyy")</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Sales Chart
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: @Html.Raw(Json.Encode(ViewBag.SalesChartLabels)),
+                datasets: [{
+                    label: 'Doanh thu',
+                    data: @Html.Raw(Json.Encode(ViewBag.SalesChartData)),
+                    borderColor: '#e4002b',
+                    tension: 0.4,
+                    fill: true,
+                    backgroundColor: 'rgba(228, 0, 43, 0.1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('vi-VN') + 'đ';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+} 

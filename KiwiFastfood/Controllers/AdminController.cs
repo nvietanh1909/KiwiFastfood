@@ -193,6 +193,7 @@ namespace KiwiFastfood.Controllers
 
         [HttpPost]
         public async Task<ActionResult> CreateProduct(FormCollection form, HttpPostedFileBase anhDD)
+
         {
             if (!_isLogin || !_isAdmin) return RedirectToAction("Login", "User");
 
