@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using KiwiFastfood.Services;
+using System.Net.Http;
+
 
 namespace KiwiFastfood.Controllers
 {
@@ -112,7 +114,9 @@ namespace KiwiFastfood.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(FormCollection form)
+
+        public async Task<ActionResult> Create(FormCollection form, HttpPostedFileBase anhDD)
+
         {
             if (!_isLogin || !_isAdmin) return RedirectToAction("Login", "User");
 
@@ -126,17 +130,20 @@ namespace KiwiFastfood.Controllers
                 string token = Session["UserToken"].ToString();
                 _productService.SetToken(token);
 
-                var productData = new
+
+                byte[] anhDDBytes = new byte[anhDD.ContentLength];
+                anhDD.InputStream.Read(anhDDBytes, 0, anhDD.ContentLength);
+
+                MultipartFormDataContent multipart_form = new MultipartFormDataContent
                 {
-                    tenMon = form["tenMon"],
-                    giaBan = decimal.Parse(form["giaBan"]),
-                    maLoai = form["maLoai"],
-                    noiDung = form["noiDung"],
-                    hinhAnh = form["hinhAnh"],
-                    soLuongTon = int.Parse(form["soLuongTon"])
+                    { new StringContent(form["tenMon"]), "tenMon" },
+                    { new StringContent(form["giaBan"]), "giaBan" },
+                    { new StringContent(form["noiDung"]), "noiDung" },
+                    { new ByteArrayContent(anhDDBytes, 0, anhDD.ContentLength), "anhDD", anhDD.FileName },
+                    { new StringContent(form["soLuongTon"]), "soLuongTon" }
                 };
 
-                var response = await _productService.CreateProductAsync(productData);
+                var response = await _productService.CreateProductAsync(multipart_form);
                 dynamic result = JsonConvert.DeserializeObject(response);
 
                 if (result?.success != true)

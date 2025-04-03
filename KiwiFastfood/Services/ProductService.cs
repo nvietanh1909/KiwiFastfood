@@ -44,15 +44,19 @@ namespace KiwiFastfood.Services
         }
 
 
-        public async Task<string> CreateProductAsync(dynamic productData)
+
+        public async Task<string> CreateProductAsync(MultipartFormDataContent productData)
+
         {
             if (string.IsNullOrEmpty(_token))
             {
                 throw new Exception("No authentication token available. Please login first.");
             }
 
-            var content = new StringContent(JsonConvert.SerializeObject(productData), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("products", content);
+
+            //var content = new StringContent(JsonConvert.SerializeObject(productData), Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync("products", productData);
+            var _getContent = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }

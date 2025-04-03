@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -191,7 +192,8 @@ namespace KiwiFastfood.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateProduct(FormCollection form)
+        public async Task<ActionResult> CreateProduct(FormCollection form, HttpPostedFileBase anhDD)
+
         {
             if (!_isLogin || !_isAdmin) return RedirectToAction("Login", "User");
 
@@ -219,17 +221,18 @@ namespace KiwiFastfood.Controllers
                     }
                 }
 
-                var productData = new
-                {
-                    tenMon = form["tenMon"],
-                    giaBan = decimal.Parse(form["giaBan"]),
-                    maLoai = id,
-                    noiDung = form["noiDung"],
-                    hinhAnh = form["anhDD"],
-                    soLuongTon = int.Parse(form["soLuongTon"])
-                };
+                byte[] anhDDBytes = new byte[anhDD.ContentLength];
+                anhDD.InputStream.Read(anhDDBytes, 0, anhDD.ContentLength);
 
-                var response = await _productService.CreateProductAsync(productData);
+                MultipartFormDataContent multipart_form = new MultipartFormDataContent();
+                multipart_form.Add(new StringContent(form["tenMon"]), "tenMon");
+                multipart_form.Add(new StringContent(form["giaBan"]), "giaBan");
+                multipart_form.Add(new StringContent(id), "maLoai");
+                multipart_form.Add(new StringContent(form["noiDung"]), "noiDung");
+                multipart_form.Add(new ByteArrayContent(anhDDBytes, 0, anhDD.ContentLength), "anhDD", anhDD.FileName);
+                multipart_form.Add(new StringContent(form["soLuongTon"]), "soLuongTon");
+
+                var response = await _productService.CreateProductAsync(multipart_form);
                 dynamic result = JsonConvert.DeserializeObject(response);
 
 
